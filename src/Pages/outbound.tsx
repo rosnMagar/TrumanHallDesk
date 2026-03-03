@@ -4,6 +4,7 @@ import {
   AppShell, Group, Button, Text, TextInput, Paper, Title,
   Stack, Anchor, Box, Table, Badge, Pagination
 } from '@mantine/core'
+import SiteFooter from '../Components/SiteFooter'
 import { IconDeviceDesktop } from '@tabler/icons-react'
 
 type Tab = 'Inbound' | 'Outbound' | 'Lock-out' | 'Equipment' | 'Timeclock'
@@ -85,7 +86,7 @@ export default function ResidenceLifeOutbound() {
   ))
 
   return (
-    <AppShell header={{ height: 56 }} footer={{ height: 80 }} padding={0}>
+    <AppShell header={{ height: 56 }} footer={{ height: 100 }} padding={0}>
 
       {/* Header */}
       <AppShell.Header>
@@ -136,7 +137,7 @@ export default function ResidenceLifeOutbound() {
 
       {/* Main */}
       <AppShell.Main bg="gray.1">
-        <Stack p="xl" maw={1100} mx="auto">
+        <Stack p="xl" maw={900} mx="auto">
 
           <Paper withBorder shadow="xs" p="lg" radius="md">
             <Title order={4} mb="md">
@@ -186,35 +187,8 @@ export default function ResidenceLifeOutbound() {
       </AppShell.Main>
 
       {/* Footer */}
-      <AppShell.Footer bg="gray.2" p="md">
-        <Group justify="space-between" maw={1100} mx="auto">
+      <SiteFooter />
 
-          <Stack gap={4}>
-            <Text fw={700} size="sm">Contact Info</Text>
-            {['HD On-Duty', 'RA On-Duty', 'CC On-Duty'].map(role => (
-              <Group key={role} gap="xs">
-                <Text size="xs" c="dimmed">{role}</Text>
-                <Anchor size="xs">123-456-7890</Anchor>
-              </Group>
-            ))}
-          </Stack>
-
-          <Stack gap={4}>
-            <Text fw={700} size="sm">Report an Issue</Text>
-            {['Message Comm. Coordinator', 'Building Issue', 'ITS Website'].map(l => (
-              <Anchor key={l} size="xs">{l}</Anchor>
-            ))}
-          </Stack>
-
-          <Stack gap={4}>
-            <Text fw={700} size="sm">Useful Links</Text>
-            {['Frequently Asked Questions', 'Desk Worker Schedule', 'Binder PDF'].map(l => (
-              <Anchor key={l} size="xs">{l}</Anchor>
-            ))}
-          </Stack>
-
-        </Group>
-      </AppShell.Footer>
     </AppShell>
   )
 }

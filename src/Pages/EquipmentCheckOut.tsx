@@ -4,6 +4,7 @@ import {
   AppShell, Group, Button, Text, TextInput, Paper, Title,
   SimpleGrid, Stack, Anchor, Box, Table, Pagination,
 } from '@mantine/core'
+import SiteFooter from '../Components/SiteFooter'
 import { IconDeviceDesktop, IconCheck, IconX, IconSearch, IconAdjustments } from '@tabler/icons-react'
 
 type Tab = 'Inbound' | 'Outbound' | 'Lock-out' | 'Equipment' | 'Timeclock'
@@ -112,7 +113,7 @@ export default function EquipmentCheckOut() {
 
       {/* Main */}
       <AppShell.Main bg="gray.1">
-        <Stack p="xl" maw={960} mx="auto" gap="lg">
+        <Stack p="xl" maw={900} mx="auto" gap="lg">
 
           {/* Equipment Check Out Form */}
           <Paper
@@ -242,31 +243,7 @@ export default function EquipmentCheckOut() {
       </AppShell.Main>
 
       {/* Footer */}
-      <AppShell.Footer bg="gray.2" p="md">
-        <SimpleGrid cols={3} maw={960} mx="auto">
-          <Stack gap={4}>
-            <Text fw={700} size="sm">Contact Info</Text>
-            {[['HD On-Duty', '123-456-7890'], ['RA On-Duty', '123-456-7890'], ['CC On-Duty', '123-456-7890']].map(([role, num]) => (
-              <Group key={role} gap="lg">
-                <Text size="xs" c="dimmed" w={80}>{role}</Text>
-                <Anchor href={`tel:${num}`} size="xs">{num}</Anchor>
-              </Group>
-            ))}
-          </Stack>
-          <Stack gap={4}>
-            <Text fw={700} size="sm">Report an Issue</Text>
-            {['Message Comm. Cordinator', 'Building Issue', 'ITS Website'].map(l => (
-              <Anchor key={l} href="#" size="xs">{l}</Anchor>
-            ))}
-          </Stack>
-          <Stack gap={4}>
-            <Text fw={700} size="sm">Useful Links</Text>
-            {['Frequently Asked Questions', 'Desk Worker Schedule', 'Binder PDF'].map(l => (
-              <Anchor key={l} href="#" size="xs">{l}</Anchor>
-            ))}
-          </Stack>
-        </SimpleGrid>
-      </AppShell.Footer>
+      <SiteFooter />
 
     </AppShell>
   )
