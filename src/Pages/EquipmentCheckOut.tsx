@@ -118,7 +118,7 @@ export default function EquipmentCheckOut() {
           {/* Equipment Check Out Form */}
           <Paper
             withBorder shadow="xs" p="xl" radius="md"
-            style={{ borderColor: 'var(--mantine-color-grape-6)', borderWidth: 2 }}
+            style={{borderWidth: 2 }}
           >
             <Title order={4} mb="lg">Equipment Check Out</Title>
             <Stack gap="md">
