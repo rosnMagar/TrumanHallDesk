@@ -5,8 +5,19 @@ const contactInfo: [string, string][] = [
   ['RA On-Duty', '263-456-7890'],
   ['CC On-Duty', '263-456-7890'],
 ];
-const reportLinks = ['Message Comm. Cordinator', 'Building Issue', 'ITS Website'];
-const usefulLinks = ['Frequently Asked Questions', 'Desk Worker Schedule', 'Binder PDF'];
+
+//Replace the '#' in the href with the actual links when we have them look at ITS website for example
+const reportLinks: [string, string][] = [
+  ['Message Comm. Coordinator', '#'],
+  ['Building Issue', '#'],
+  ['ITS Website', 'https://its.truman.edu/'],
+];
+
+const usefulLinks: [string, string][] = [
+  ['Frequently Asked Questions', '#'],
+  ['Desk Worker Schedule', '#'],
+  ['Binder PDF', '#'],
+];
 
 export default function SiteFooter() {
   return (
@@ -23,14 +34,18 @@ export default function SiteFooter() {
         </Stack>
         <Stack gap={4}>
           <Text fw={700} size="sm">Report an Issue</Text>
-          {reportLinks.map(l => (
-            <Anchor key={l} href="#" size="xs">{l}</Anchor>
+          {reportLinks.map(([label, href]) => (
+            <Anchor key={label} href={href} size="xs" target="_blank" rel="noreferrer">
+              {label}
+            </Anchor>
           ))}
         </Stack>
         <Stack gap={4}>
           <Text fw={700} size="sm">Useful Links</Text>
-          {usefulLinks.map(l => (
-            <Anchor key={l} href="#" size="xs">{l}</Anchor>
+          {usefulLinks.map(([label, href]) => (
+            <Anchor key={label} href={href} size="xs" target="_blank" rel="noreferrer">
+              {label}
+            </Anchor>
           ))}
         </Stack>
       </Group>
