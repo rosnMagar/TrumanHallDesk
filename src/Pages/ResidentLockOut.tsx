@@ -1,14 +1,10 @@
 import { useState } from 'react'
 import {
   AppShell, Group, Button, Text, TextInput, Paper, Title,
-  SimpleGrid, Stack, Anchor, Box, List,
+  SimpleGrid, Stack, Box, List,
 } from '@mantine/core'
-import { IconDeviceDesktop } from '@tabler/icons-react'
 import SiteFooter from '../Components/SiteFooter'
-import { useNavigate } from 'react-router-dom'
-
-type Tab = 'Inbound' | 'Outbound' | 'Lock-out' | 'Equipment' | 'Timeclock'
-const TABS: Tab[] = ['Inbound', 'Outbound', 'Lock-out', 'Equipment', 'Timeclock']
+import SiteHeader, { type Tab } from '../Components/SiteHeader'
 
 interface LockoutForm {
   bannerId: string
@@ -18,7 +14,6 @@ interface LockoutForm {
 
 export default function ResidentLockout() {
   const [activeTab, setActiveTab] = useState<Tab>('Lock-out')
-  const navigate = useNavigate()
 
   const [form, setForm] = useState<LockoutForm>({
     bannerId: '',
@@ -37,42 +32,7 @@ export default function ResidentLockout() {
   return (
     <AppShell header={{ height: 56 }} footer={{ height: 100 }} padding={0}>
 
-      {/* Header */}
-      <AppShell.Header>
-        <Group h="100%" px="md" justify="space-between">
-          <Text fw={700} size="xl" c="grape">Residence Life</Text>
-          <Group gap="xs">
-            {TABS.map(tab => (
-              <Button
-                key={tab}
-                size="xs"
-                variant={activeTab === tab ? 'filled' : 'default'}
-                color="grape"
-                onClick={() => {
-                  setActiveTab(tab)
-
-                  if (tab === 'Inbound') navigate('/')
-                  if (tab === 'Outbound') navigate('/outbound')
-                  if (tab === 'Lock-out') navigate('/lockout')
-                  if (tab === 'Equipment') navigate('/equipment')
-                  if (tab === 'Timeclock') navigate('/timeclock')
-                }}
-              >
-                {tab}
-              </Button>
-            ))}
-          </Group>
-          <Group gap="xs">
-            <Text size="sm">BNB Desk</Text>
-            <Box
-              w={32} h={32}
-              style={{ borderRadius: '50%', backgroundColor: 'var(--mantine-color-grape-6)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-            >
-              <IconDeviceDesktop size={16} color="white" />
-            </Box>
-          </Group>
-        </Group>
-      </AppShell.Header>
+      <SiteHeader activeTab={activeTab} onTabChange={setActiveTab} />
 
       {/* Main */}
       <AppShell.Main bg="gray.1">
@@ -131,9 +91,7 @@ export default function ResidentLockout() {
         </Stack>
       </AppShell.Main>
 
-      {/* Footer */}
       <SiteFooter />
-
     </AppShell>
   )
 }
