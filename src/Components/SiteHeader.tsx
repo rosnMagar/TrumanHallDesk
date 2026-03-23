@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { Group, Button, Text, Box, Modal, Stack, UnstyledButton } from '@mantine/core'
+import { Group, Button, Text, Box, Modal, Stack, UnstyledButton, Menu } from '@mantine/core'
 import { AppShell } from '@mantine/core'
-import { IconDeviceDesktop, IconSettings } from '@tabler/icons-react'
+import { IconDeviceDesktop, IconSettings, IconLogout } from '@tabler/icons-react'
 import { useNavigate } from 'react-router-dom'
 
 export type Tab = 'Inbound' | 'Outbound' | 'Lock-out' | 'Equipment' | 'Timeclock'
@@ -14,9 +14,10 @@ interface SiteHeaderProps {
   onTabChange?: (tab: Tab) => void
   isAdmin?: boolean
   adminLabel?: string
+  isAdminPage?: boolean
 }
 
-export default function SiteHeader({ activeTab, onTabChange, isAdmin = true, adminLabel }: SiteHeaderProps) {
+export default function SiteHeader({ activeTab, onTabChange, isAdmin = true, adminLabel, isAdminPage = false }: SiteHeaderProps) {
   const navigate = useNavigate()
   const [adminModalOpen, setAdminModalOpen] = useState(false)
 
@@ -59,7 +60,7 @@ export default function SiteHeader({ activeTab, onTabChange, isAdmin = true, adm
             <Button
               key={tab}
               size="xs"
-              variant={activeTab === tab ? 'filled' : 'default'}
+              variant={!isAdminPage && activeTab === tab ? 'filled' : 'default'}
               color="grape"
               onClick={() => handleTabClick(tab)}
             >
@@ -79,21 +80,35 @@ export default function SiteHeader({ activeTab, onTabChange, isAdmin = true, adm
           {adminLabel ? (
             <Text size="sm" fw={500}>Admin: {adminLabel}</Text>
           ) : (
-            <>
-              <Text size="sm">BNB Desk</Text>
-              <Box
-                w={32} h={32}
-                style={{
-                  borderRadius: '50%',
-                  backgroundColor: 'var(--mantine-color-grape-6)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <IconDeviceDesktop size={16} color="white" />
-              </Box>
-            </>
+            <Menu shadow="md" width={160} position="bottom-end">
+              <Menu.Target>
+                <UnstyledButton>
+                  <Group gap={4}>
+                    <Text size="sm">BNB Desk</Text>
+                    <Box
+                      w={32} h={32}
+                      style={{
+                        borderRadius: '50%',
+                        backgroundColor: 'var(--mantine-color-grape-6)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <IconDeviceDesktop size={16} color="white" />
+                    </Box>
+                  </Group>
+                </UnstyledButton>
+              </Menu.Target>
+              <Menu.Dropdown>
+                <Menu.Item
+                  leftSection={<IconLogout size={14} />}
+                  onClick={() => navigate('/')}
+                >
+                  Sign Out
+                </Menu.Item>
+              </Menu.Dropdown>
+            </Menu>
           )}
         </Group>
       </Group>

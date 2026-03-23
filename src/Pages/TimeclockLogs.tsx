@@ -1,11 +1,8 @@
 import { useState } from 'react'
-import {
-  AppShell, Group, Button, Text, TextInput, Paper, Title,
-  Stack, Table,
-} from '@mantine/core'
-import { IconSearch, IconAdjustments } from '@tabler/icons-react'
+import { AppShell, Stack, Title } from '@mantine/core'
 import SiteHeader, { type Tab } from '../Components/SiteHeader'
 import SiteFooter from '../Components/SiteFooter'
+import DataTable from '../Components/DataTable'
 
 interface TimeclockLog {
   id: number
@@ -26,75 +23,50 @@ const INITIAL_LOGS: TimeclockLog[] = [
   { id: 4, building: 'Blanton', firstName: 'Alice', lastName: 'Williams', bannerId: '789123456', inOut: 'In', timestamp: '01/16/2024 08:30 AM', ipAddress: '192.168.1.104', computerName: 'BLANTON-DSK-01' },
 ]
 
+const columns = [
+  { key: 'id' as const, label: 'ID', sortable: true },
+  { key: 'building' as const, label: 'Building', sortable: true },
+  { key: 'firstName' as const, label: 'First Name', sortable: true },
+  { key: 'lastName' as const, label: 'Last Name', sortable: true },
+  { key: 'bannerId' as const, label: 'Banner ID', sortable: true },
+  { key: 'inOut' as const, label: 'In/Out', sortable: true },
+  { key: 'timestamp' as const, label: 'Timestamp', sortable: true },
+  { key: 'ipAddress' as const, label: 'IP Address', sortable: true },
+  { key: 'computerName' as const, label: 'Computer Name', sortable: true },
+]
+
+const filterFields = [
+  { key: 'building' as const, label: 'Building' },
+  { key: 'inOut' as const, label: 'In/Out' },
+]
+
+const filterOptions: Record<string, { value: string; label: string }[]> = {
+  building: ['Truman', 'Miller', 'Cross', 'Blanton'].map(v => ({ value: v, label: v })),
+  inOut: [
+    { value: 'In', label: 'In' },
+    { value: 'Out', label: 'Out' },
+  ],
+}
+
 export default function TimeclockLogs() {
   const [activeTab, setActiveTab] = useState<Tab>('Timeclock')
   const [logs] = useState<TimeclockLog[]>(INITIAL_LOGS)
-  const [search, setSearch] = useState('')
-
-  const filteredLogs = logs.filter(log =>
-    !search ||
-    log.building.toLowerCase().includes(search.toLowerCase()) ||
-    log.firstName.toLowerCase().includes(search.toLowerCase()) ||
-    log.lastName.toLowerCase().includes(search.toLowerCase()) ||
-    log.bannerId.includes(search)
-  )
 
   return (
     <AppShell header={{ height: 56 }} footer={{ height: 100 }} padding={0}>
-      <SiteHeader activeTab={activeTab} onTabChange={setActiveTab} isAdmin={true} adminLabel="Timeclock" />
+      <SiteHeader activeTab={activeTab} onTabChange={setActiveTab} isAdmin={true} adminLabel="Timeclock" isAdminPage={true} />
 
       <AppShell.Main bg="gray.1">
         <Stack p="xl" maw={1200} mx="auto" gap="lg">
-          <Group justify="space-between">
-            <Title order={2}>Timeclock</Title>
-            <Group gap="sm">
-              <Button variant="default" size="sm" leftSection={<IconAdjustments size={14} />}>
-                Filter
-              </Button>
-              <TextInput
-                placeholder="Search"
-                leftSection={<IconSearch size={14} />}
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                w={180}
-              />
-            </Group>
-          </Group>
+          <Title order={2}>Timeclock</Title>
 
-          <Text size="sm" c="dimmed">{filteredLogs.length} records</Text>
-
-          <Paper withBorder radius="md" style={{ overflow: 'hidden' }}>
-            <Table withColumnBorders highlightOnHover verticalSpacing="md">
-              <Table.Thead>
-                <Table.Tr>
-                  <Table.Th fw={700}>ID</Table.Th>
-                  <Table.Th fw={700}>Building</Table.Th>
-                  <Table.Th fw={700}>First Name</Table.Th>
-                  <Table.Th fw={700}>Last Name</Table.Th>
-                  <Table.Th fw={700}>Banner ID</Table.Th>
-                  <Table.Th fw={700}>In/Out</Table.Th>
-                  <Table.Th fw={700}>Timestamp</Table.Th>
-                  <Table.Th fw={700}>IP Address</Table.Th>
-                  <Table.Th fw={700}>Computer Name</Table.Th>
-                </Table.Tr>
-              </Table.Thead>
-              <Table.Tbody>
-                {filteredLogs.map(log => (
-                  <Table.Tr key={log.id}>
-                    <Table.Td>{log.id}</Table.Td>
-                    <Table.Td>{log.building}</Table.Td>
-                    <Table.Td>{log.firstName}</Table.Td>
-                    <Table.Td>{log.lastName}</Table.Td>
-                    <Table.Td>{log.bannerId}</Table.Td>
-                    <Table.Td>{log.inOut}</Table.Td>
-                    <Table.Td>{log.timestamp}</Table.Td>
-                    <Table.Td>{log.ipAddress}</Table.Td>
-                    <Table.Td>{log.computerName}</Table.Td>
-                  </Table.Tr>
-                ))}
-              </Table.Tbody>
-            </Table>
-          </Paper>
+          <DataTable
+            data={logs}
+            columns={columns}
+            searchableFields={['building', 'firstName', 'lastName', 'bannerId']}
+            filterFields={filterFields}
+            filterOptions={filterOptions}
+          />
         </Stack>
       </AppShell.Main>
 

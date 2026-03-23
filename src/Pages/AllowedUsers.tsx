@@ -58,7 +58,7 @@ export default function AllowedUsers() {
 
   return (
     <AppShell header={{ height: 56 }} footer={{ height: 100 }} padding={0}>
-      <SiteHeader activeTab={activeTab} onTabChange={setActiveTab} isAdmin={true} adminLabel="Allowed Users" />
+      <SiteHeader activeTab={activeTab} onTabChange={setActiveTab} isAdmin={true} adminLabel="Allowed Users" isAdminPage={true} />
 
       <AppShell.Main bg="gray.1">
         <Stack p="xl" maw={900} mx="auto" gap="lg">

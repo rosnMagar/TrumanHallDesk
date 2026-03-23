@@ -1,11 +1,8 @@
 import { useState } from 'react'
-import {
-  AppShell, Group, Button, Text, TextInput, Paper, Title,
-  Stack, Table, Checkbox,
-} from '@mantine/core'
-import { IconSearch, IconAdjustments } from '@tabler/icons-react'
+import { AppShell, Stack, Title } from '@mantine/core'
 import SiteHeader, { type Tab } from '../Components/SiteHeader'
 import SiteFooter from '../Components/SiteFooter'
+import ActionTable from '../Components/ActionTable'
 
 interface ActivityItem {
   id: number
@@ -26,120 +23,56 @@ const INITIAL_ITEMS: ActivityItem[] = [
   { id: 3, room: 'Cross 302', name: 'Bob Johnson', phone: '555-9012', bannerId: '456789123', itemDescription: 'Sports Equipment', checkoutDate: '01/18/2024', checkoutStaff: 'JDoe', checkinDate: '', checkinStaff: '' },
 ]
 
+const columns = [
+  { key: 'id' as const, label: '#', sortable: true },
+  { key: 'room' as const, label: 'Room', sortable: true },
+  { key: 'name' as const, label: 'Name', sortable: true },
+  { key: 'phone' as const, label: 'Phone', sortable: true },
+  { key: 'bannerId' as const, label: 'Banner ID', sortable: true },
+  { key: 'itemDescription' as const, label: 'Item Description', sortable: true },
+  { key: 'checkoutDate' as const, label: 'Checkout Date', sortable: true },
+  { key: 'checkoutStaff' as const, label: 'Checkout Staff', sortable: true },
+  { key: 'checkinDate' as const, label: 'Checkin Date', sortable: true },
+  { key: 'checkinStaff' as const, label: 'Checkin Staff', sortable: true },
+]
+
+const filterFields = [
+  { key: 'room' as const, label: 'Room' },
+]
+
+const filterOptions: Record<string, { value: string; label: string }[]> = {
+  room: ['Truman 101', 'Miller 205', 'Cross 302'].map(v => ({ value: v, label: v })),
+}
+
 export default function ActivityItemsList() {
   const [activeTab, setActiveTab] = useState<Tab>('Timeclock')
   const [items] = useState<ActivityItem[]>(INITIAL_ITEMS)
-  const [selectedIds, setSelectedIds] = useState<number[]>([])
-  const [search, setSearch] = useState('')
 
-  const filteredItems = items.filter(item =>
-    !search ||
-    item.room.toLowerCase().includes(search.toLowerCase()) ||
-    item.name.toLowerCase().includes(search.toLowerCase()) ||
-    item.itemDescription.toLowerCase().includes(search.toLowerCase()) ||
-    item.bannerId.includes(search)
-  )
-
-  const handleCheckboxChange = (id: number) => {
-    setSelectedIds(prev =>
-      prev.includes(id)
-        ? prev.filter(i => i !== id)
-        : [...prev, id]
-    )
+  const handleDeleteSelected = (ids: number[]) => {
+    alert(`Delete ${ids.length} selected items`)
   }
 
-  const handleDeleteSelected = () => {
-    alert(`Delete ${selectedIds.length} selected items`)
-  }
-
-  const handleExportRecords = () => {
-    alert(`Export ${selectedIds.length} selected items`)
+  const handleExportSelected = (ids: number[]) => {
+    alert(`Export ${ids.length} selected items`)
   }
 
   return (
     <AppShell header={{ height: 56 }} footer={{ height: 100 }} padding={0}>
-      <SiteHeader activeTab={activeTab} onTabChange={setActiveTab} isAdmin={true} adminLabel="Activity Items List" />
+      <SiteHeader activeTab={activeTab} onTabChange={setActiveTab} isAdmin={true} adminLabel="Activity Items List" isAdminPage={true} />
 
       <AppShell.Main bg="gray.1">
         <Stack p="xl" maw={1200} mx="auto" gap="lg">
           <Title order={2}>Activity Items List</Title>
 
-          <Group justify="space-between">
-            <Group gap="sm">
-              <Button variant="default" size="sm" leftSection={<IconAdjustments size={14} />}>
-                Filter
-              </Button>
-              <TextInput
-                placeholder="Search"
-                leftSection={<IconSearch size={14} />}
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                w={180}
-              />
-            </Group>
-            <Group gap="md">
-              <Text size="sm" c="dimmed">{filteredItems.length} records</Text>
-              <Button
-                variant="light"
-                color="red"
-                size="sm"
-                onClick={handleDeleteSelected}
-                disabled={selectedIds.length === 0}
-              >
-                Delete Selected
-              </Button>
-              <Button
-                color="grape"
-                size="sm"
-                onClick={handleExportRecords}
-                disabled={selectedIds.length === 0}
-              >
-                Export Records
-              </Button>
-            </Group>
-          </Group>
-
-          <Paper withBorder radius="md" style={{ overflow: 'hidden' }}>
-            <Table withColumnBorders highlightOnHover verticalSpacing="md">
-              <Table.Thead>
-                <Table.Tr>
-                  <Table.Th fw={700} w={40}></Table.Th>
-                  <Table.Th fw={700}>#</Table.Th>
-                  <Table.Th fw={700}>Room</Table.Th>
-                  <Table.Th fw={700}>Name</Table.Th>
-                  <Table.Th fw={700}>Phone</Table.Th>
-                  <Table.Th fw={700}>Banner ID</Table.Th>
-                  <Table.Th fw={700}>Item Description</Table.Th>
-                  <Table.Th fw={700}>Checkout Date</Table.Th>
-                  <Table.Th fw={700}>Checkout Staff</Table.Th>
-                  <Table.Th fw={700}>Checkin Date</Table.Th>
-                  <Table.Th fw={700}>Checkin Staff</Table.Th>
-                </Table.Tr>
-              </Table.Thead>
-              <Table.Tbody>
-                {filteredItems.map(item => (
-                  <Table.Tr key={item.id}>
-                    <Table.Td>
-                      <Checkbox
-                        checked={selectedIds.includes(item.id)}
-                        onChange={() => handleCheckboxChange(item.id)}
-                      />
-                    </Table.Td>
-                    <Table.Td>{item.id}</Table.Td>
-                    <Table.Td>{item.room}</Table.Td>
-                    <Table.Td>{item.name}</Table.Td>
-                    <Table.Td>{item.phone}</Table.Td>
-                    <Table.Td>{item.bannerId}</Table.Td>
-                    <Table.Td>{item.itemDescription}</Table.Td>
-                    <Table.Td>{item.checkoutDate}</Table.Td>
-                    <Table.Td>{item.checkoutStaff}</Table.Td>
-                    <Table.Td>{item.checkinDate}</Table.Td>
-                    <Table.Td>{item.checkinStaff}</Table.Td>
-                  </Table.Tr>
-                ))}
-              </Table.Tbody>
-            </Table>
-          </Paper>
+          <ActionTable
+            data={items}
+            columns={columns}
+            searchableFields={['room', 'name', 'itemDescription', 'bannerId']}
+            filterFields={filterFields}
+            filterOptions={filterOptions}
+            onDeleteSelected={handleDeleteSelected}
+            onExportSelected={handleExportSelected}
+          />
         </Stack>
       </AppShell.Main>
 

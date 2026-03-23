@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import {
-  AppShell, Group, Button, Text, TextInput, Paper, Title,
-  Stack, Box, Table, Pagination
+  AppShell, Group, Button, TextInput,
+  Stack, Table, Pagination
 } from '@mantine/core'
 import SiteFooter from '../Components/SiteFooter'
 import SiteHeader, { type Tab } from '../Components/SiteHeader'
+import FormCard from '../Components/FormCard'
 
 interface Package {
   id: number
@@ -87,10 +88,7 @@ export default function ResidenceLifeOutbound() {
       <AppShell.Main bg="gray.1">
         <Stack p="xl" maw={900} mx="auto">
 
-          <Paper withBorder shadow="xs" p="lg" radius="md">
-            <Title order={4} mb="md">
-              Package Pickup and Forwarding
-            </Title>
+          <FormCard title="Package Pickup and Forwarding">
 
             {/* Controls */}
             <Group mb="md" justify="space-between">
@@ -130,7 +128,7 @@ export default function ResidenceLifeOutbound() {
             <Group justify="center" mt="md">
               <Pagination value={page} onChange={setPage} total={10} size="sm" />
             </Group>
-          </Paper>
+          </FormCard>
         </Stack>
       </AppShell.Main>
 

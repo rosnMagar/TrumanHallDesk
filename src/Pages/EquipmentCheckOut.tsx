@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import {
-  AppShell, Group, Button, Text, TextInput, Paper, Title,
-  SimpleGrid, Stack, Box, Table, Pagination,
+  AppShell, Group, Button, Text, TextInput, Title,
+  SimpleGrid, Stack, Table, Pagination, Paper,
 } from '@mantine/core'
 import SiteFooter from '../Components/SiteFooter'
 import SiteHeader, { type Tab } from '../Components/SiteHeader'
 import { IconCheck, IconX, IconSearch, IconAdjustments } from '@tabler/icons-react'
+import FormCard from '../Components/FormCard'
 
 interface EquipmentRow {
   id: number
@@ -28,7 +29,7 @@ interface CheckoutForm {
 }
 
 const INITIAL_ROWS: EquipmentRow[] = [
-  { id: 1, equipment: 'Red Pot that is super red jdlkjlkjdlfjklsfjlkaj', dateOut: '01/01/2020', borrower: 'John Smith testing to see if it wraps lllllllllllllllllllllllllllllllllllllllll', bannerId: '123456789', daysOut: 2, phone: '123-456-7890', available: false },
+  { id: 1, equipment: 'Red Pot that is super red jdlkjlkjdlfjklsfjlkaj', dateOut: '01/01/2020', borrower: 'John Smith testing to see if it wraps lllllllllllllllllllllllllcccccccccccccccc', bannerId: '123456789', daysOut: 2, phone: '123-456-7890', available: false },
   { id: 2, equipment: 'Black Pan', dateOut: '', borrower: '', bannerId: '', daysOut: null, phone: '', available: true },
   ...Array.from({ length: 13 }, (_, i) => ({
     id: i + 3, equipment: '', dateOut: '', borrower: '', bannerId: '', daysOut: null, phone: '', available: false,
@@ -64,16 +65,10 @@ export default function EquipmentCheckOut() {
 
       <SiteHeader activeTab={activeTab} onTabChange={setActiveTab} />
 
-      {/* Main */}
       <AppShell.Main bg="gray.1">
         <Stack p="xl" maw={900} mx="auto" gap="lg">
 
-          {/* Equipment Check Out Form */}
-          <Paper
-            withBorder shadow="xs" p="xl" radius="md"
-            style={{ borderWidth: 2 }}
-          >
-            <Title order={4} mb="lg">Equipment Check Out</Title>
+          <FormCard title="Equipment Check Out" style={{ borderWidth: 2 }}>
             <Stack gap="md">
               <SimpleGrid cols={3} spacing="md">
                 <TextInput
@@ -109,9 +104,8 @@ export default function EquipmentCheckOut() {
                 </SimpleGrid>
               </Stack>
             </Stack>
-          </Paper>
+          </FormCard>
 
-          {/* Inventory Table */}
           <Stack gap="sm">
             <Group justify="space-between">
               <Title order={3}>Inventory</Title>

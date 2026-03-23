@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import {
-  AppShell, Group, Button, Text, TextInput, Paper, Title,
-  SimpleGrid, Stack, Box,
+  AppShell, Group, Button, Text, TextInput, Paper,
+  SimpleGrid, Stack,
 } from '@mantine/core'
 import SiteFooter from '../Components/SiteFooter'
 import SiteHeader, { type Tab } from '../Components/SiteHeader'
+import FormCard from '../Components/FormCard'
 
 interface MailForm {
   residentName: string
@@ -59,13 +60,10 @@ export default function ResidenceLife() {
 
       <SiteHeader activeTab={activeTab} onTabChange={setActiveTab} />
 
-      {/* Main */}
       <AppShell.Main bg="gray.1">
         <Stack p="xl" maw={900} mx="auto" gap="lg">
 
-          {/* Mail Processing */}
-          <Paper withBorder shadow="xs" p="xl" radius="md">
-            <Title order={4} mb="lg">Mail Processing</Title>
+          <FormCard title="Mail Processing">
             <SimpleGrid cols={2} spacing="xl">
               <Stack gap="md">
                 <TextInput
@@ -105,11 +103,9 @@ export default function ResidenceLife() {
                 </Group>
               </Stack>
             </SimpleGrid>
-          </Paper>
+          </FormCard>
 
-          {/* Forward Package */}
-          <Paper withBorder shadow="xs" p="xl" radius="md">
-            <Title order={4} mb="lg">Forward Package</Title>
+          <FormCard title="Forward Package">
             <SimpleGrid cols={2} spacing="xl">
               <Stack gap="md">
                 <TextInput
@@ -148,7 +144,7 @@ export default function ResidenceLife() {
                 </Group>
               </Stack>
             </SimpleGrid>
-          </Paper>
+          </FormCard>
 
         </Stack>
       </AppShell.Main>
