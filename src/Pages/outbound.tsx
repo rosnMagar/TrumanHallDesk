@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import {
-  AppShell, Group, Button, TextInput, Paper, Title,
-  Stack, Table, Pagination
+  Group, Button, TextInput, Paper, Title,
+ Table, Pagination
 } from '@mantine/core'
-import SiteFooter from '../Components/SiteFooter'
-import SiteHeader, { type Tab } from '../Components/SiteHeader'
+import { type Tab } from '../Components/SiteHeader'
+import PageLayout from '../Components/PageLayout'
 
 interface Package {
   id: number
@@ -79,62 +79,50 @@ export default function ResidenceLifeOutbound() {
   ))
 
   return (
-    <AppShell header={{ height: 56 }} footer={{ height: 100 }} padding={0}>
+    <PageLayout activeTab={activeTab} onTabChange={setActiveTab}>
+      <Paper withBorder shadow="xs" p="lg" radius="md">
+        <Title order={4} mb="md">
+          Package Pickup and Forwarding
+        </Title>
 
-      <SiteHeader activeTab={activeTab} onTabChange={setActiveTab} />
+        {/* Controls */}
+        <Group mb="md" justify="space-between">
+          <Group>
+            <TextInput placeholder="Banner ID" />
+            <Button variant="default">To Be Forwarded</Button>
+          </Group>
+          <Group>
+            <Button variant="default">Filter</Button>
+            <TextInput
+              placeholder="Search"
+              value={search}
+              onChange={(e) => setSearch(e.currentTarget.value)}
+            />
+          </Group>
+        </Group>
 
-      {/* Main */}
-      <AppShell.Main bg="gray.1">
-        <Stack p="xl" maw={900} mx="auto">
+        {/* Table */}
+        <Table striped highlightOnHover withTableBorder>
+          <Table.Thead>
+            <Table.Tr>
+              <Table.Th>Package ID</Table.Th>
+              <Table.Th>Building</Table.Th>
+              <Table.Th>Tracking #</Table.Th>
+              <Table.Th>Description</Table.Th>
+              <Table.Th>Name</Table.Th>
+              <Table.Th>In-date</Table.Th>
+              <Table.Th>Out-date</Table.Th>
+              <Table.Th>Action</Table.Th>
+            </Table.Tr>
+          </Table.Thead>
+          <Table.Tbody>{rows}</Table.Tbody>
+        </Table>
 
-          <Paper withBorder shadow="xs" p="lg" radius="md">
-            <Title order={4} mb="md">
-              Package Pickup and Forwarding
-            </Title>
-
-            {/* Controls */}
-            <Group mb="md" justify="space-between">
-              <Group>
-                <TextInput placeholder="Banner ID" />
-                <Button variant="default">To Be Forwarded</Button>
-              </Group>
-
-              <Group>
-                <Button variant="default">Filter</Button>
-                <TextInput
-                  placeholder="Search"
-                  value={search}
-                  onChange={(e) => setSearch(e.currentTarget.value)}
-                />
-              </Group>
-            </Group>
-
-            {/* Table */}
-            <Table striped highlightOnHover withTableBorder>
-              <Table.Thead>
-                <Table.Tr>
-                  <Table.Th>Package ID</Table.Th>
-                  <Table.Th>Building</Table.Th>
-                  <Table.Th>Tracking #</Table.Th>
-                  <Table.Th>Description</Table.Th>
-                  <Table.Th>Name</Table.Th>
-                  <Table.Th>In-date</Table.Th>
-                  <Table.Th>Out-date</Table.Th>
-                  <Table.Th>Action</Table.Th>
-                </Table.Tr>
-              </Table.Thead>
-              <Table.Tbody>{rows}</Table.Tbody>
-            </Table>
-
-            {/* Pagination */}
-            <Group justify="center" mt="md">
-              <Pagination value={page} onChange={setPage} total={10} size="sm" />
-            </Group>
-          </Paper>
-        </Stack>
-      </AppShell.Main>
-
-      <SiteFooter />
-    </AppShell>
+        {/* Pagination */}
+        <Group justify="center" mt="md">
+          <Pagination value={page} onChange={setPage} total={10} size="sm" />
+        </Group>
+      </Paper>
+    </PageLayout>
   )
 }

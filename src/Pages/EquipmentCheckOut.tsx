@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import {
-  AppShell, Group, Button, Text, TextInput, Paper, Title,
+  Group, Button, Text, TextInput, Paper, Title,
   SimpleGrid, Stack, Table, Pagination,
 } from '@mantine/core'
 import SiteFooter from '../Components/SiteFooter'
-import SiteHeader, { type Tab } from '../Components/SiteHeader'
+import { type Tab } from '../Components/SiteHeader'
 import { IconCheck, IconX, IconSearch, IconAdjustments } from '@tabler/icons-react'
+import PageLayout from '../Components/PageLayout'
 
 interface EquipmentRow {
   id: number
@@ -60,13 +61,7 @@ export default function EquipmentCheckOut() {
   )
 
   return (
-    <AppShell header={{ height: 56 }} footer={{ height: 100 }} padding={0}>
-
-      <SiteHeader activeTab={activeTab} onTabChange={setActiveTab} />
-
-      {/* Main */}
-      <AppShell.Main bg="gray.1">
-        <Stack p="xl" maw={900} mx="auto" gap="lg">
+    <PageLayout activeTab={activeTab} onTabChange={setActiveTab}>
 
           {/* Equipment Check Out Form */}
           <Paper
@@ -192,10 +187,7 @@ export default function EquipmentCheckOut() {
             </Group>
           </Stack>
 
-        </Stack>
-      </AppShell.Main>
-
       <SiteFooter />
-    </AppShell>
+    </PageLayout>
   )
 }
