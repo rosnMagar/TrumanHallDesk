@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import {
   AppShell, Group, Button, Text, TextInput, Paper, Title,
-  SimpleGrid, Stack, Box, List,
+  SimpleGrid, Stack, List,
 } from '@mantine/core'
 import SiteFooter from '../Components/SiteFooter'
 import SiteHeader, { type Tab } from '../Components/SiteHeader'
@@ -53,7 +53,7 @@ export default function ResidentLockout() {
                 />
                 <TextInput
                   label="Phone Number"
-                  description="I don't think this is needed for lockouts??? - James"
+                  description="This will be autofilled after swiping badge"
                   placeholder="Resident Phone Number"
                   value={form.phoneNumber}
                   onChange={setField('phoneNumber')}
@@ -83,7 +83,7 @@ export default function ResidentLockout() {
 
           {/* Submit Button */}
           <Group justify="center">
-            <Button color="grape" px="xl" onClick={handleSubmit}>
+            <Button color="brand-blue" px="xl" onClick={handleSubmit}>
               Submit Lockout
             </Button>
           </Group>

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import {
   AppShell, Group, Button, Text, TextInput, Paper, Title,
-  SimpleGrid, Stack, Box, Table, Pagination,
+  SimpleGrid, Stack, Table, Pagination,
 } from '@mantine/core'
 import SiteFooter from '../Components/SiteFooter'
 import SiteHeader, { type Tab } from '../Components/SiteHeader'
@@ -164,11 +164,11 @@ export default function EquipmentCheckOut() {
                       <Table.Td>
                         {row.equipment && (
                           row.available ? (
-                            <Button size="xs" color="grape" onClick={() => handleBorrow(row.id)}>
+                            <Button size="xs" color="brand-blue" onClick={() => handleBorrow(row.id)}>
                               Borrow
                             </Button>
                           ) : (
-                            <Button size="xs" variant="light" color="grape">
+                            <Button size="xs" variant="light" color="brand-blue">
                               Forward
                             </Button>
                           )
@@ -185,7 +185,7 @@ export default function EquipmentCheckOut() {
                 total={10}
                 value={activePage}
                 onChange={setActivePage}
-                color="grape"
+                color="brand-blue"
                 siblings={1}
                 boundaries={1}
               />

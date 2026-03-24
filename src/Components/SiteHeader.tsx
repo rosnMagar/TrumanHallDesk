@@ -26,14 +26,14 @@ export default function SiteHeader({ activeTab, onTabChange }: SiteHeaderProps) 
   return (
     <AppShell.Header>
       <Group h="100%" px="md" justify="space-between">
-        <Text fw={700} size="xl" c="grape">Residence Life</Text>
+        <Text fw={700} size="xl" c="brand-purple">Residence Life</Text>
         <Group gap="xs">
           {TABS.map(tab => (
             <Button
               key={tab}
               size="xs"
               variant={activeTab === tab ? 'filled' : 'default'}
-              color="grape"
+              // color inherited from theme — no need to specify
               onClick={() => handleTabClick(tab)}
             >
               {tab}
@@ -46,7 +46,7 @@ export default function SiteHeader({ activeTab, onTabChange }: SiteHeaderProps) 
             w={32} h={32}
             style={{
               borderRadius: '50%',
-              backgroundColor: 'var(--mantine-color-grape-6)',
+              backgroundColor: '#42236B',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',

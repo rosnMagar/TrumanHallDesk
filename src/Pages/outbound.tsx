@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import {
-  AppShell, Group, Button, Text, TextInput, Paper, Title,
-  Stack, Box, Table, Pagination
+  AppShell, Group, Button, TextInput, Paper, Title,
+  Stack, Table, Pagination
 } from '@mantine/core'
 import SiteFooter from '../Components/SiteFooter'
 import SiteHeader, { type Tab } from '../Components/SiteHeader'
@@ -66,7 +66,7 @@ export default function ResidenceLifeOutbound() {
       <Table.Td>{pkg.outDate || ''}</Table.Td>
       <Table.Td>
         {pkg.status === 'pickup' ? (
-          <Button size="xs" color="grape" onClick={() => handlePickup(pkg.id)}>
+          <Button size="xs" color="brand-blue" onClick={() => handlePickup(pkg.id)}>
             Pick Up
           </Button>
         ) : (

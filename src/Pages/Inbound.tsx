@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import {
   AppShell, Group, Button, Text, TextInput, Paper, Title,
-  SimpleGrid, Stack, Box,
+  SimpleGrid, Stack,
 } from '@mantine/core'
 import SiteFooter from '../Components/SiteFooter'
 import SiteHeader, { type Tab } from '../Components/SiteHeader'
@@ -101,7 +101,7 @@ export default function ResidenceLife() {
                 </Paper>
                 <Group justify="flex-end" align="center">
                   <Text size="xs" c="dimmed">Label Number: <strong>{labelNum}</strong></Text>
-                  <Button color="grape" onClick={handleCheckIn}>Check in and Print Label</Button>
+                  <Button color="brand-blue" onClick={handleCheckIn}>Check in and Print Label</Button>
                 </Group>
               </Stack>
             </SimpleGrid>
@@ -144,7 +144,7 @@ export default function ResidenceLife() {
                 />
                 <Group justify="flex-end" align="center" mt="auto">
                   <Text size="xs" c="dimmed">Label Number: <strong>FW{fwdNum}</strong></Text>
-                  <Button color="grape" onClick={handleForward}>Mark 'FWD' and Print Label</Button>
+                  <Button color="brand-blue" onClick={handleForward}>Mark 'FWD' and Print Label</Button>
                 </Group>
               </Stack>
             </SimpleGrid>
