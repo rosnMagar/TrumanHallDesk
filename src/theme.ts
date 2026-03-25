@@ -7,8 +7,8 @@ export const theme: MantineThemeOverride = createTheme({
   defaultRadius: 'md',
 
   colors: {
-    'brand-purple': Array(10).fill('rgb(81, 11, 118)') as any,
-    'brand-blue': Array(10).fill('#5CA6DD') as any,
+    'brand-purple': Array(10).fill('#510C76') as any,
+    'brand-blue': Array(10).fill('#00A8E2') as any,
   },
 
   components: {
