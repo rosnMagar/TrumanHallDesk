@@ -3,10 +3,10 @@ import {
   Group, Button, Text, TextInput, Paper, Title,
   SimpleGrid, Stack, Table, Pagination,
 } from '@mantine/core'
-import SiteFooter from '../Components/SiteFooter'
 import { type Tab } from '../Components/SiteHeader'
 import { IconCheck, IconX, IconSearch, IconAdjustments } from '@tabler/icons-react'
 import PageLayout from '../Components/PageLayout'
+import { useFormFields } from '../hooks/useFormField'
 
 interface EquipmentRow {
   id: number
@@ -42,13 +42,10 @@ export default function EquipmentCheckOut() {
   const [search, setSearch] = useState('')
   const [rows, setRows] = useState<EquipmentRow[]>(INITIAL_ROWS)
 
-  const [form, setForm] = useState<CheckoutForm>({
+  const { form, setField } = useFormFields<CheckoutForm>({
     bannerId: '', residentName: '', phoneNumber: '',
     equipment1: '', equipment2: '', equipment3: '',
   })
-
-  const setField = (f: keyof CheckoutForm) => (e: React.ChangeEvent<HTMLInputElement>) =>
-    setForm(p => ({ ...p, [f]: e.target.value }))
 
   const handleBorrow = (id: number) => {
     setRows(prev => prev.map(r => r.id === id ? { ...r, available: false } : r))
@@ -63,131 +60,125 @@ export default function EquipmentCheckOut() {
   return (
     <PageLayout activeTab={activeTab} onTabChange={setActiveTab}>
 
-          {/* Equipment Check Out Form */}
-          <Paper
-            withBorder shadow="xs" p="xl" radius="md"
-            style={{ borderWidth: 2 }}
-          >
-            <Title order={4} mb="lg">Equipment Check Out</Title>
-            <Stack gap="md">
-              <SimpleGrid cols={3} spacing="md">
-                <TextInput
-                  label="Banner ID"
-                  description="Please swipe the resident's badge"
-                  placeholder="Banner ID"
-                  value={form.bannerId}
-                  onChange={setField('bannerId')}
-                />
-                <TextInput
-                  label="Resident Name"
-                  description="This will be autofilled after swiping badge"
-                  placeholder="Smith, John"
-                  value={form.residentName}
-                  onChange={setField('residentName')}
-                />
-                <TextInput
-                  label="Resident Phone Number"
-                  description="Phone will be autofilled after swiping badge"
-                  placeholder="123-456-7890"
-                  value={form.phoneNumber}
-                  onChange={setField('phoneNumber')}
-                />
-              </SimpleGrid>
+      <Paper withBorder shadow="xs" p="xl" radius="md">
+        <Title order={4} mb="lg">Equipment Check Out</Title>
+        <Stack gap="md">
+          <SimpleGrid cols={3} spacing="md">
+            <TextInput
+              label="Banner ID"
+              description="Please swipe the resident's badge"
+              placeholder="Banner ID"
+              value={form.bannerId}
+              onChange={setField('bannerId')}
+            />
+            <TextInput
+              label="Resident Name"
+              description="This will be autofilled after swiping badge"
+              placeholder="Smith, John"
+              value={form.residentName}
+              onChange={setField('residentName')}
+            />
+            <TextInput
+              label="Resident Phone Number"
+              description="Phone will be autofilled after swiping badge"
+              placeholder="123-456-7890"
+              value={form.phoneNumber}
+              onChange={setField('phoneNumber')}
+            />
+          </SimpleGrid>
 
-              <Stack gap={4}>
-                <Text size="sm" fw={600}>Equipment Selection</Text>
-                <Text size="xs" c="dimmed">Select at least one equipment item to check it out to resident.</Text>
-                <SimpleGrid cols={3} spacing="md">
-                  <TextInput placeholder="Equipment Dropdown" value={form.equipment1} onChange={setField('equipment1')} />
-                  <TextInput placeholder="Equipment Dropdown" value={form.equipment2} onChange={setField('equipment2')} />
-                  <TextInput placeholder="Equipment Dropdown" value={form.equipment3} onChange={setField('equipment3')} />
-                </SimpleGrid>
-              </Stack>
-            </Stack>
-          </Paper>
-
-          {/* Inventory Table */}
-          <Stack gap="sm">
-            <Group justify="space-between">
-              <Title order={3}>Inventory</Title>
-              <Group gap="sm">
-                <Button variant="default" size="sm" leftSection={<IconAdjustments size={14} />}>
-                  Filter
-                </Button>
-                <TextInput
-                  placeholder="Search"
-                  leftSection={<IconSearch size={14} />}
-                  value={search}
-                  onChange={e => setSearch(e.target.value)}
-                  w={180}
-                />
-              </Group>
-            </Group>
-
-            <Paper withBorder radius="md" style={{ overflow: 'hidden' }}>
-              <Table withColumnBorders highlightOnHover verticalSpacing="md">
-                <Table.Thead>
-                  <Table.Tr>
-                    <Table.Th fw={700}>Equipment</Table.Th>
-                    <Table.Th fw={700}>Date Out</Table.Th>
-                    <Table.Th fw={700}>Borrower</Table.Th>
-                    <Table.Th fw={700}>Banner ID</Table.Th>
-                    <Table.Th fw={700}>Days Out</Table.Th>
-                    <Table.Th fw={700}>Phone #</Table.Th>
-                    <Table.Th fw={700}>Availability</Table.Th>
-                    <Table.Th fw={700}>Action</Table.Th>
-                  </Table.Tr>
-                </Table.Thead>
-                <Table.Tbody>
-                  {filteredRows.map(row => (
-                    <Table.Tr key={row.id}>
-                      <Table.Td>{row.equipment}</Table.Td>
-                      <Table.Td>{row.dateOut}</Table.Td>
-                      <Table.Td>
-                        <Text lineClamp={2} size="sm">{row.borrower}</Text>
-                      </Table.Td>
-                      <Table.Td>{row.bannerId}</Table.Td>
-                      <Table.Td>{row.daysOut ?? ''}</Table.Td>
-                      <Table.Td>{row.phone}</Table.Td>
-                      <Table.Td>
-                        {row.equipment ? (
-                          row.available
-                            ? <IconCheck size={16} color="green" />
-                            : <IconX size={16} color="red" />
-                        ) : null}
-                      </Table.Td>
-                      <Table.Td>
-                        {row.equipment && (
-                          row.available ? (
-                            <Button size="xs" color="brand-blue" onClick={() => handleBorrow(row.id)}>
-                              Borrow
-                            </Button>
-                          ) : (
-                            <Button size="xs" variant="light" color="brand-blue">
-                              Forward
-                            </Button>
-                          )
-                        )}
-                      </Table.Td>
-                    </Table.Tr>
-                  ))}
-                </Table.Tbody>
-              </Table>
-            </Paper>
-
-            <Group justify="center">
-              <Pagination
-                total={10}
-                value={activePage}
-                onChange={setActivePage}
-                color="brand-blue"
-                siblings={1}
-                boundaries={1}
-              />
-            </Group>
+          <Stack gap={4}>
+            <Text size="sm" fw={600}>Equipment Selection</Text>
+            <Text size="xs" c="dimmed">Select at least one equipment item to check it out to resident.</Text>
+            <SimpleGrid cols={3} spacing="md">
+              <TextInput placeholder="Equipment Dropdown" value={form.equipment1} onChange={setField('equipment1')} />
+              <TextInput placeholder="Equipment Dropdown" value={form.equipment2} onChange={setField('equipment2')} />
+              <TextInput placeholder="Equipment Dropdown" value={form.equipment3} onChange={setField('equipment3')} />
+            </SimpleGrid>
           </Stack>
+        </Stack>
+      </Paper>
 
-      <SiteFooter />
+      <Stack gap="sm">
+        <Group justify="space-between">
+          <Title order={3}>Inventory</Title>
+          <Group gap="sm">
+            <Button variant="default" size="sm" leftSection={<IconAdjustments size={14} />}>
+              Filter
+            </Button>
+            <TextInput
+              placeholder="Search"
+              leftSection={<IconSearch size={14} />}
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              w={180}
+            />
+          </Group>
+        </Group>
+
+        <Paper withBorder radius="md" style={{ overflow: 'hidden' }}>
+          <Table withColumnBorders highlightOnHover verticalSpacing="md">
+            <Table.Thead>
+              <Table.Tr>
+                <Table.Th fw={700}>Equipment</Table.Th>
+                <Table.Th fw={700}>Date Out</Table.Th>
+                <Table.Th fw={700}>Borrower</Table.Th>
+                <Table.Th fw={700}>Banner ID</Table.Th>
+                <Table.Th fw={700}>Days Out</Table.Th>
+                <Table.Th fw={700}>Phone #</Table.Th>
+                <Table.Th fw={700}>Availability</Table.Th>
+                <Table.Th fw={700}>Action</Table.Th>
+              </Table.Tr>
+            </Table.Thead>
+            <Table.Tbody>
+              {filteredRows.map(row => (
+                <Table.Tr key={row.id}>
+                  <Table.Td>{row.equipment}</Table.Td>
+                  <Table.Td>{row.dateOut}</Table.Td>
+                  <Table.Td>
+                    <Text lineClamp={2} size="sm">{row.borrower}</Text>
+                  </Table.Td>
+                  <Table.Td>{row.bannerId}</Table.Td>
+                  <Table.Td>{row.daysOut ?? ''}</Table.Td>
+                  <Table.Td>{row.phone}</Table.Td>
+                  <Table.Td>
+                    {row.equipment ? (
+                      row.available
+                        ? <IconCheck size={16} color="green" />
+                        : <IconX size={16} color="red" />
+                    ) : null}
+                  </Table.Td>
+                  <Table.Td>
+                    {row.equipment && (
+                      row.available ? (
+                        <Button size="xs" color="brand-blue" onClick={() => handleBorrow(row.id)}>
+                          Borrow
+                        </Button>
+                      ) : (
+                        <Button size="xs" variant="light" color="brand-blue">
+                          Forward
+                        </Button>
+                      )
+                    )}
+                  </Table.Td>
+                </Table.Tr>
+              ))}
+            </Table.Tbody>
+          </Table>
+        </Paper>
+
+        <Group justify="center">
+          <Pagination
+            total={10}
+            value={activePage}
+            onChange={setActivePage}
+            color="brand-blue"
+            siblings={1}
+            boundaries={1}
+          />
+        </Group>
+      </Stack>
+
     </PageLayout>
   )
 }

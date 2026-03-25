@@ -5,6 +5,7 @@ import {
 } from '@mantine/core'
 import { type Tab } from '../Components/SiteHeader'
 import PageLayout from '../Components/PageLayout'
+import { useFormFields } from '../hooks/useFormField'
 
 interface LockoutForm {
   bannerId: string
@@ -14,15 +15,11 @@ interface LockoutForm {
 
 export default function ResidentLockout() {
   const [activeTab, setActiveTab] = useState<Tab>('Lock-out')
-
-  const [form, setForm] = useState<LockoutForm>({
+  const { form, setForm, setField } = useFormFields<LockoutForm>({
     bannerId: '',
     phoneNumber: '',
     keyNumber: '',
   })
-
-  const setField = (f: keyof LockoutForm) => (e: React.ChangeEvent<HTMLInputElement>) =>
-    setForm(p => ({ ...p, [f]: e.target.value }))
 
   const handleSubmit = () => {
     alert(`Lockout submitted!\nBanner ID: ${form.bannerId}\nPhone: ${form.phoneNumber}\nKey: ${form.keyNumber}`)
@@ -31,11 +28,9 @@ export default function ResidentLockout() {
 
   return (
     <PageLayout activeTab={activeTab} onTabChange={setActiveTab}>
-
       <Paper withBorder shadow="xs" p="xl" radius="md">
         <Title order={4} mb="lg">Resident Lockout</Title>
         <SimpleGrid cols={2} spacing="xl">
-
           <Stack gap="md">
             <TextInput
               label="Banner ID"
@@ -59,7 +54,6 @@ export default function ResidentLockout() {
               onChange={setField('keyNumber')}
             />
           </Stack>
-
           <Paper withBorder p="md" radius="md" bg="gray.0">
             <Text fw={600} size="sm" mb="sm">Desk Attendant Instructions</Text>
             <List size="sm" c="dimmed" spacing={4}>
@@ -69,16 +63,13 @@ export default function ResidentLockout() {
               <List.Item>Get the key and enter the code in the Key Number box</List.Item>
             </List>
           </Paper>
-
         </SimpleGrid>
       </Paper>
-
       <Group justify="center">
         <Button color="brand-blue" px="xl" onClick={handleSubmit}>
           Submit Lockout
         </Button>
       </Group>
-
     </PageLayout>
   )
 }

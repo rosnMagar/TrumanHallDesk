@@ -5,6 +5,7 @@ import {
 } from '@mantine/core'
 import { type Tab } from '../Components/SiteHeader'
 import PageLayout from '../Components/PageLayout'
+import { useFormFields } from '../hooks/useFormField'
 
 interface MailForm {
   residentName: string
@@ -27,20 +28,14 @@ export default function ResidenceLife() {
   const [labelNum, setLabelNum] = useState(123456)
   const [fwdNum, setFwdNum] = useState(1234)
 
-  const [mail, setMail] = useState<MailForm>({
+  const { form: mail, setForm: setMail, setField: setMailField } = useFormFields<MailForm>({
     residentName: '', packageDescription: '', checkedInBy: '',
     infoName: '', infoBuilding: '', infoRoom: '',
   })
 
-  const [fwd, setFwd] = useState<ForwardForm>({
+  const { form: fwd, setForm: setFwd, setField: setFwdField } = useFormFields<ForwardForm>({
     residentName: '', packageDescription: '', processedBy: '', forwardTo: '',
   })
-
-  const setMailField = (f: keyof MailForm) => (e: React.ChangeEvent<HTMLInputElement>) =>
-    setMail(p => ({ ...p, [f]: e.target.value }))
-
-  const setFwdField = (f: keyof ForwardForm) => (e: React.ChangeEvent<HTMLInputElement>) =>
-    setFwd(p => ({ ...p, [f]: e.target.value }))
 
   const handleCheckIn = () => {
     alert(`Label #${labelNum} printed for: ${mail.residentName}`)
@@ -56,8 +51,6 @@ export default function ResidenceLife() {
 
   return (
     <PageLayout activeTab={activeTab} onTabChange={setActiveTab}>
-
-      {/* Mail Processing */}
       <Paper withBorder shadow="xs" p="xl" radius="md">
         <Title order={4} mb="lg">Mail Processing</Title>
         <SimpleGrid cols={2} spacing="xl">
@@ -101,7 +94,6 @@ export default function ResidenceLife() {
         </SimpleGrid>
       </Paper>
 
-      {/* Forward Package */}
       <Paper withBorder shadow="xs" p="xl" radius="md">
         <Title order={4} mb="lg">Forward Package</Title>
         <SimpleGrid cols={2} spacing="xl">
@@ -143,7 +135,6 @@ export default function ResidenceLife() {
           </Stack>
         </SimpleGrid>
       </Paper>
-
     </PageLayout>
   )
 }
