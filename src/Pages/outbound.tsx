@@ -1,11 +1,10 @@
 import { useState } from 'react'
 import {
-  AppShell, Group, Button, TextInput,
-  Stack, Table, Pagination
+  Group, Button, TextInput, Paper, Title,
+  Table, Pagination
 } from '@mantine/core'
-import SiteFooter from '../Components/SiteFooter'
-import SiteHeader, { type Tab } from '../Components/SiteHeader'
-import FormCard from '../Components/FormCard'
+import { type Tab } from '../Components/SiteHeader'
+import PageLayout from '../Components/PageLayout'
 
 interface Package {
   id: number
@@ -67,7 +66,7 @@ export default function ResidenceLifeOutbound() {
       <Table.Td>{pkg.outDate || ''}</Table.Td>
       <Table.Td>
         {pkg.status === 'pickup' ? (
-          <Button size="xs" color="grape" onClick={() => handlePickup(pkg.id)}>
+          <Button size="xs" color="brand-blue" onClick={() => handlePickup(pkg.id)}>
             Pick Up
           </Button>
         ) : (
@@ -80,59 +79,47 @@ export default function ResidenceLifeOutbound() {
   ))
 
   return (
-    <AppShell header={{ height: 56 }} footer={{ height: 100 }} padding={0}>
+    <PageLayout activeTab={activeTab} onTabChange={setActiveTab}>
+      <Paper withBorder shadow="xs" p="lg" radius="md">
+        <Title order={4} mb="md">
+          Package Pickup and Forwarding
+        </Title>
 
-      <SiteHeader activeTab={activeTab} onTabChange={setActiveTab} />
+        <Group mb="md" justify="space-between">
+          <Group>
+            <TextInput placeholder="Banner ID" />
+            <Button variant="default">To Be Forwarded</Button>
+          </Group>
+          <Group>
+            <Button variant="default">Filter</Button>
+            <TextInput
+              placeholder="Search"
+              value={search}
+              onChange={(e) => setSearch(e.currentTarget.value)}
+            />
+          </Group>
+        </Group>
 
-      {/* Main */}
-      <AppShell.Main bg="gray.1">
-        <Stack p="xl" maw={900} mx="auto">
+        <Table striped highlightOnHover withTableBorder>
+          <Table.Thead>
+            <Table.Tr>
+              <Table.Th>Package ID</Table.Th>
+              <Table.Th>Building</Table.Th>
+              <Table.Th>Tracking #</Table.Th>
+              <Table.Th>Description</Table.Th>
+              <Table.Th>Name</Table.Th>
+              <Table.Th>In-date</Table.Th>
+              <Table.Th>Out-date</Table.Th>
+              <Table.Th>Action</Table.Th>
+            </Table.Tr>
+          </Table.Thead>
+          <Table.Tbody>{rows}</Table.Tbody>
+        </Table>
 
-          <FormCard title="Package Pickup and Forwarding">
-
-            {/* Controls */}
-            <Group mb="md" justify="space-between">
-              <Group>
-                <TextInput placeholder="Banner ID" />
-                <Button variant="default">To Be Forwarded</Button>
-              </Group>
-
-              <Group>
-                <Button variant="default">Filter</Button>
-                <TextInput
-                  placeholder="Search"
-                  value={search}
-                  onChange={(e) => setSearch(e.currentTarget.value)}
-                />
-              </Group>
-            </Group>
-
-            {/* Table */}
-            <Table striped highlightOnHover withTableBorder>
-              <Table.Thead>
-                <Table.Tr>
-                  <Table.Th>Package ID</Table.Th>
-                  <Table.Th>Building</Table.Th>
-                  <Table.Th>Tracking #</Table.Th>
-                  <Table.Th>Description</Table.Th>
-                  <Table.Th>Name</Table.Th>
-                  <Table.Th>In-date</Table.Th>
-                  <Table.Th>Out-date</Table.Th>
-                  <Table.Th>Action</Table.Th>
-                </Table.Tr>
-              </Table.Thead>
-              <Table.Tbody>{rows}</Table.Tbody>
-            </Table>
-
-            {/* Pagination */}
-            <Group justify="center" mt="md">
-              <Pagination value={page} onChange={setPage} total={10} size="sm" />
-            </Group>
-          </FormCard>
-        </Stack>
-      </AppShell.Main>
-
-      <SiteFooter />
-    </AppShell>
+        <Group justify="center" mt="md">
+          <Pagination value={page} onChange={setPage} total={10} size="sm" />
+        </Group>
+      </Paper>
+    </PageLayout>
   )
 }

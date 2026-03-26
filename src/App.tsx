@@ -1,6 +1,3 @@
-//npm install react-router-dom
-//R:66, G:35, B:107 - Purple
-//R: 92, G: 166, B:221 - Blue
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import ResidenceLife from './Pages/Inbound'
 import Outbound from './Pages/outbound'

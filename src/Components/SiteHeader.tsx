@@ -13,11 +13,10 @@ interface SiteHeaderProps {
   activeTab: Tab
   onTabChange?: (tab: Tab) => void
   isAdmin?: boolean
-  adminLabel?: string
   isAdminPage?: boolean
 }
 
-export default function SiteHeader({ activeTab, onTabChange, isAdmin = true, adminLabel, isAdminPage = false }: SiteHeaderProps) {
+export default function SiteHeader({ activeTab, onTabChange, isAdmin = true, isAdminPage = false }: SiteHeaderProps) {
   const navigate = useNavigate()
   const [adminModalOpen, setAdminModalOpen] = useState(false)
 
@@ -52,16 +51,14 @@ export default function SiteHeader({ activeTab, onTabChange, isAdmin = true, adm
   return (
     <AppShell.Header>
       <Group h="100%" px="md" justify="space-between">
-        <Group gap="md">
-          <Text fw={700} size="xl" c="grape">Residence Life</Text>
-        </Group>
+        <Text fw={700} size="xl" c="brand-purple">Residence Life</Text>
+
         <Group gap="xs">
           {TABS.map(tab => (
             <Button
               key={tab}
               size="xs"
               variant={!isAdminPage && activeTab === tab ? 'filled' : 'default'}
-              color="grape"
               onClick={() => handleTabClick(tab)}
             >
               {tab}
@@ -76,40 +73,37 @@ export default function SiteHeader({ activeTab, onTabChange, isAdmin = true, adm
             </UnstyledButton>
           )}
         </Group>
+
         <Group gap="xs">
-          {adminLabel ? (
-            <Text size="sm" fw={500}>Admin: {adminLabel}</Text>
-          ) : (
-            <Menu shadow="md" width={160} position="bottom-end">
-              <Menu.Target>
-                <UnstyledButton>
-                  <Group gap={4}>
-                    <Text size="sm">BNB Desk</Text>
-                    <Box
-                      w={32} h={32}
-                      style={{
-                        borderRadius: '50%',
-                        backgroundColor: 'var(--mantine-color-grape-6)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}
-                    >
-                      <IconDeviceDesktop size={16} color="white" />
-                    </Box>
-                  </Group>
-                </UnstyledButton>
-              </Menu.Target>
-              <Menu.Dropdown>
-                <Menu.Item
-                  leftSection={<IconLogout size={14} />}
-                  onClick={() => navigate('/')}
-                >
-                  Sign Out
-                </Menu.Item>
-              </Menu.Dropdown>
-            </Menu>
-          )}
+          <Menu shadow="md" width={160} position="bottom-end">
+            <Menu.Target>
+              <UnstyledButton>
+                <Group gap={4}>
+                  <Text size="sm">BNB Desk</Text>
+                  <Box
+                    w={32} h={32}
+                    style={{
+                      borderRadius: '50%',
+                      backgroundColor: 'var(--mantine-color-brand-purple-6)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <IconDeviceDesktop size={16} color="white" />
+                  </Box>
+                </Group>
+              </UnstyledButton>
+            </Menu.Target>
+            <Menu.Dropdown>
+              <Menu.Item
+                leftSection={<IconLogout size={14} />}
+                onClick={() => navigate('/')}
+              >
+                Sign Out
+              </Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
         </Group>
       </Group>
 
@@ -124,7 +118,6 @@ export default function SiteHeader({ activeTab, onTabChange, isAdmin = true, adm
             <Button
               key={page.id}
               variant="light"
-              color="grape"
               justify="flex-start"
               onClick={() => handleAdminPageClick(page.id)}
             >
