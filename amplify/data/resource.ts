@@ -6,7 +6,7 @@ import { deleteAvatar } from '../function/deleteAvatar/resource';
 const schema = a.schema({
   User: a
     .model({
-      id: a.string(),
+      id: a.id().required(),
       email: a.string(),
       name: a.string(),
       avatarS3Key: a.string(),
