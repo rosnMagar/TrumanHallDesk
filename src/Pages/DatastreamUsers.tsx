@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import {
-  AppShell, Group, Button, TextInput, Paper, Title,
+  Group, Button, TextInput, Paper, Title,
   SimpleGrid, Stack, Table, Select,
 } from '@mantine/core'
-import SiteHeader, { type Tab } from '../Components/SiteHeader'
-import SiteFooter from '../Components/SiteFooter'
+import { type Tab } from '../Components/SiteHeader'
+import PageLayout from '../Components/PageLayout'
 
 interface DatastreamUser {
   id: number
@@ -65,11 +65,8 @@ export default function DatastreamUsers() {
   }
 
   return (
-    <AppShell header={{ height: 56 }} footer={{ height: 100 }} padding={0}>
-      <SiteHeader activeTab={activeTab} onTabChange={setActiveTab} isAdmin={true} adminLabel="Datastream Users" isAdminPage={true} />
-
-      <AppShell.Main bg="gray.1">
-        <Stack p="xl" maw={900} mx="auto" gap="lg">
+    <PageLayout activeTab={activeTab} onTabChange={setActiveTab}>
+      <Stack gap="lg">
           <Title order={2}>Datastream Users</Title>
 
           <Paper withBorder radius="md" style={{ overflow: 'hidden' }}>
@@ -142,10 +139,7 @@ export default function DatastreamUsers() {
               </Group>
             </SimpleGrid>
           </Paper>
-        </Stack>
-      </AppShell.Main>
-
-      <SiteFooter />
-    </AppShell>
+      </Stack>
+    </PageLayout>
   )
 }

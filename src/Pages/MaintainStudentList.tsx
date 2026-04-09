@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import {
-  AppShell, Group, Button, TextInput, Paper, Title,
+  Group, Button, TextInput, Paper, Title,
   SimpleGrid, Stack, Divider, Checkbox,
 } from '@mantine/core'
-import SiteHeader, { type Tab } from '../Components/SiteHeader'
-import SiteFooter from '../Components/SiteFooter'
+import { type Tab } from '../Components/SiteHeader'
+import PageLayout from '../Components/PageLayout'
 
 export default function MaintainStudentList() {
   const [activeTab, setActiveTab] = useState<Tab>('Timeclock')
@@ -32,14 +32,11 @@ export default function MaintainStudentList() {
   }
 
   return (
-    <AppShell header={{ height: 56 }} footer={{ height: 100 }} padding={0}>
-      <SiteHeader activeTab={activeTab} onTabChange={setActiveTab} isAdmin={true} adminLabel="Maintain Student List" isAdminPage={true} />
+    <PageLayout activeTab={activeTab} onTabChange={setActiveTab}>
+      <Stack gap="lg">
+        <Title order={2}>Maintain Student List</Title>
 
-      <AppShell.Main bg="gray.1">
-        <Stack p="xl" maw={900} mx="auto" gap="lg">
-          <Title order={2}>Maintain Student List</Title>
-
-          <Paper withBorder p="xl" radius="md">
+        <Paper withBorder p="xl" radius="md">
             <Title order={4} mb="md">Change or Remove Student</Title>
             <Group gap="md">
               <TextInput
@@ -140,10 +137,7 @@ export default function MaintainStudentList() {
             <Button variant="link" color="grape">View Student List by Hall</Button>
             <Button variant="link" color="grape">Export Off-Campus Addresses</Button>
           </Group>
-        </Stack>
-      </AppShell.Main>
-
-      <SiteFooter />
-    </AppShell>
+      </Stack>
+    </PageLayout>
   )
 }

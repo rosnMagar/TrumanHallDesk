@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { AppShell, Stack, Title } from '@mantine/core'
-import SiteHeader, { type Tab } from '../Components/SiteHeader'
-import SiteFooter from '../Components/SiteFooter'
+import { Stack, Title } from '@mantine/core'
+import { type Tab } from '../Components/SiteHeader'
+import PageLayout from '../Components/PageLayout'
 import ActionTable from '../Components/ActionTable'
 
 interface ActivityCard {
@@ -40,26 +40,20 @@ export default function ActivityCards() {
   }
 
   return (
-    <AppShell header={{ height: 56 }} footer={{ height: 100 }} padding={0}>
-      <SiteHeader activeTab={activeTab} onTabChange={setActiveTab} isAdmin={true} adminLabel="Activity Cards" isAdminPage={true} />
+    <PageLayout activeTab={activeTab} onTabChange={setActiveTab} isAdminPage={true}>
+      <Stack gap="lg">
+        <Title order={2}>Activity Cards</Title>
 
-      <AppShell.Main bg="gray.1">
-        <Stack p="xl" maw={900} mx="auto" gap="lg">
-          <Title order={2}>Activity Cards</Title>
-
-          <ActionTable
-            data={cards}
-            columns={columns}
-            searchableFields={['room', 'name', 'bannerId']}
-            filterFields={filterFields}
-            filterOptions={filterOptions}
-            onDeleteSelected={handleDeleteSelected}
-            deleteLabel="Delete Selected"
-          />
-        </Stack>
-      </AppShell.Main>
-
-      <SiteFooter />
-    </AppShell>
+        <ActionTable
+          data={cards}
+          columns={columns}
+          searchableFields={['room', 'name', 'bannerId']}
+          filterFields={filterFields}
+          filterOptions={filterOptions}
+          onDeleteSelected={handleDeleteSelected}
+          deleteLabel="Delete Selected"
+        />
+      </Stack>
+    </PageLayout>
   )
 }

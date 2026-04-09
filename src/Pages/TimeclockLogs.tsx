@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { AppShell, Stack, Title } from '@mantine/core'
-import SiteHeader, { type Tab } from '../Components/SiteHeader'
-import SiteFooter from '../Components/SiteFooter'
+import { Stack, Title } from '@mantine/core'
+import { type Tab } from '../Components/SiteHeader'
+import PageLayout from '../Components/PageLayout'
 import DataTable from '../Components/DataTable'
 
 interface TimeclockLog {
@@ -53,24 +53,18 @@ export default function TimeclockLogs() {
   const [logs] = useState<TimeclockLog[]>(INITIAL_LOGS)
 
   return (
-    <AppShell header={{ height: 56 }} footer={{ height: 100 }} padding={0}>
-      <SiteHeader activeTab={activeTab} onTabChange={setActiveTab} isAdmin={true} adminLabel="Timeclock" isAdminPage={true} />
+    <PageLayout activeTab={activeTab} onTabChange={setActiveTab}>
+      <Stack gap="lg">
+        <Title order={2}>Timeclock</Title>
 
-      <AppShell.Main bg="gray.1">
-        <Stack p="xl" maw={1200} mx="auto" gap="lg">
-          <Title order={2}>Timeclock</Title>
-
-          <DataTable
-            data={logs}
-            columns={columns}
-            searchableFields={['building', 'firstName', 'lastName', 'bannerId']}
-            filterFields={filterFields}
-            filterOptions={filterOptions}
-          />
-        </Stack>
-      </AppShell.Main>
-
-      <SiteFooter />
-    </AppShell>
+        <DataTable
+          data={logs}
+          columns={columns}
+          searchableFields={['building', 'firstName', 'lastName', 'bannerId']}
+          filterFields={filterFields}
+          filterOptions={filterOptions}
+        />
+      </Stack>
+    </PageLayout>
   )
 }

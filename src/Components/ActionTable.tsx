@@ -96,12 +96,12 @@ export default function ActionTable<T extends { id: number }>({
 
   const sortedData = useMemo(() => {
     if (!sortKey) return filteredData
-    
+
     return [...filteredData].sort((a, b) => {
       const aVal = a[sortKey as keyof T]
       const bVal = b[sortKey as keyof T]
       const modifier = sortOrder === 'asc' ? 1 : -1
-      
+
       if (aVal === bVal) return 0
       if (!aVal) return 1
       if (!bVal) return -1
@@ -148,8 +148,8 @@ export default function ActionTable<T extends { id: number }>({
 
   return (
     <>
-      <Group justify="space-between" mb="sm">
-        <Group gap="sm">
+      <Group justify="space-between" mb="sm" wrap="nowrap">
+        <Group gap="sm" style={{ minWidth: 220 }}>
           {filterFields.length > 0 && (
             <Button
               variant="default"
