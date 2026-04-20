@@ -1,4 +1,8 @@
 import mysql from 'mysql2/promise';
+import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+
+const s3Client = new S3Client({ region: process.env.AWS_REGION || 'us-east-2' });
 
 const headers = {
   'Content-Type': 'application/json',
@@ -25,7 +29,24 @@ export const handler = async (event) => {
 
     const [rows] = await connection.execute('SELECT * FROM `user`');
 
-    return { statusCode: 200, headers, body: JSON.stringify(rows) };
+    const usersWithPresignedUrls = await Promise.all(
+      rows.map(async (user) => {
+        if (user.idPicture) {
+          try {
+            const command = new GetObjectCommand({
+              Bucket: process.env.S3_BUCKET_NAME,
+              Key: user.idPicture,
+            });
+            user.idPicture = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
+          } catch (s3Error) {
+            console.error("Error generating pre-signed URL for user", user.bannerID, s3Error);
+          }
+        }
+        return user;
+      })
+    );
+
+    return { statusCode: 200, headers, body: JSON.stringify(usersWithPresignedUrls) };
   } catch (error) {
     return { statusCode: 500, headers, body: JSON.stringify({ error: error.message }) };
   } finally {
