@@ -40,20 +40,6 @@ const authOptions = {
   authorizationType: AuthorizationType.COGNITO,
 };
 
-// 3. Mount Users Lambda
-const usersIntegration = new LambdaIntegration(backend.usersFunction.resources.lambda);
-const usersResource = api.root.addResource('users');
-
-// GET /users
-usersResource.addMethod('GET', usersIntegration, authOptions);
-
-// GET /users/{proxy+}
-const userProxy = usersResource.addProxy({
-  defaultIntegration: usersIntegration,
-  defaultMethodOptions: authOptions,
-  anyMethod: true,
-});
-
 // 4. Output API URL
 new CfnOutput(apiStack, 'HallDeskApiUrl', {
   value: api.url,
