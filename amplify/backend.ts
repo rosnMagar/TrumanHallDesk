@@ -1,10 +1,8 @@
 import { defineBackend } from '@aws-amplify/backend';
 import { auth } from './auth/resource';
 import { data } from './data/resource';
-import { usersFunction } from './functions/usersApi/resource';
 import {
   RestApi,
-  LambdaIntegration,
   CognitoUserPoolsAuthorizer,
   AuthorizationType,
   Cors,
@@ -17,7 +15,6 @@ import { CfnOutput } from 'aws-cdk-lib';
 const backend = defineBackend({
   auth,
   data,
-  usersFunction,
 });
 
 const apiStack = backend.createStack('HallDeskApiStack');
@@ -44,20 +41,6 @@ const authOptions = {
   authorizer,
   authorizationType: AuthorizationType.COGNITO,
 };
-
-// 3. Mount Users Lambda
-const usersIntegration = new LambdaIntegration(backend.usersFunction.resources.lambda);
-const usersResource = api.root.addResource('users');
-
-// GET /users
-usersResource.addMethod('GET', usersIntegration, authOptions);
-
-// GET /users/{proxy+}
-const userProxy = usersResource.addProxy({
-  defaultIntegration: usersIntegration,
-  defaultMethodOptions: authOptions,
-  anyMethod: true,
-});
 
 // 4. Output API URL
 new CfnOutput(apiStack, 'HallDeskApiUrl', {
