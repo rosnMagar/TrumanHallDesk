@@ -27,7 +27,6 @@ dist-ssr
 .amplify
 amplify_outputs*
 amplifyconfiguration*
-
 *.zip
 halldesk-lambda/.aws-sam
 
