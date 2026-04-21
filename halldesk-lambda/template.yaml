@@ -22,6 +22,10 @@ Parameters:
     Type: String
     Default: arn:aws:lambda:us-east-2:132483690728:layer:mysql2-layer:2
     Description: ARN of the mysql2 Lambda Layer
+  S3BucketName:
+    Type: String
+    Description: S3 Bucket containing user images
+    Default: "amzn-halldesk-s3-132483690728-us-east-2-an"
 
 Resources:
   GetAllUsersFunction:
@@ -42,8 +46,11 @@ Resources:
           DB_USER: !Ref DBUser
           DB_PASSWORD: !Ref DBPassword
           DB_NAME: !Ref DBName
+          S3_BUCKET_NAME: !Ref S3BucketName
       Policies:
         - AWSLambdaBasicExecutionRole
+        - S3ReadPolicy:
+            BucketName: !Ref S3BucketName
 
   GetUserByIdFunction:
     Type: AWS::Serverless::Function
@@ -63,8 +70,11 @@ Resources:
           DB_USER: !Ref DBUser
           DB_PASSWORD: !Ref DBPassword
           DB_NAME: !Ref DBName
+          S3_BUCKET_NAME: !Ref S3BucketName
       Policies:
         - AWSLambdaBasicExecutionRole
+        - S3ReadPolicy:
+            BucketName: !Ref S3BucketName
 
   CreateUserFunction:
     Type: AWS::Serverless::Function
@@ -129,6 +139,23 @@ Resources:
       Policies:
         - AWSLambdaBasicExecutionRole
 
+  GetUploadUrlFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: GetUploadUrl
+      Handler: getUploadUrl.handler
+      CodeUri: s3/
+      Runtime: nodejs20.x
+      Timeout: 30
+      MemorySize: 128
+      Environment:
+        Variables:
+          S3_BUCKET_NAME: !Ref S3BucketName
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - S3CrudPolicy:
+            BucketName: !Ref S3BucketName
+
   ApiGatewayApi:
     Type: AWS::Serverless::Api
     Properties:
@@ -180,6 +207,19 @@ Resources:
             delete:
               x-amazon-apigateway-integration:
                 uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DeleteUserFunction.Arn}/invocations"
+                httpMethod: POST
+                type: aws_proxy
+              responses: {}
+          /users/{bannerID}/upload-url:
+            options:
+              x-amazon-apigateway-integration:
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetAllUsersFunction.Arn}/invocations"
+                httpMethod: POST
+                type: aws_proxy
+              responses: {}
+            get:
+              x-amazon-apigateway-integration:
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetUploadUrlFunction.Arn}/invocations"
                 httpMethod: POST
                 type: aws_proxy
               responses: {}

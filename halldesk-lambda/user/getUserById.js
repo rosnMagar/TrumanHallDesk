@@ -1,4 +1,8 @@
 import mysql from 'mysql2/promise';
+import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+
+const s3Client = new S3Client({ region: process.env.AWS_REGION || 'us-east-2' });
 
 const headers = {
   'Content-Type': 'application/json',
@@ -35,7 +39,22 @@ export const handler = async (event) => {
       return { statusCode: 404, headers, body: JSON.stringify({ error: 'User not found' }) };
     }
 
-    return { statusCode: 200, headers, body: JSON.stringify(rows[0]) };
+    const user = rows[0];
+
+    if (user.idPicture) {
+      try {
+        const command = new GetObjectCommand({
+          Bucket: process.env.S3_BUCKET_NAME,
+          Key: user.idPicture,
+        });
+        user.idPicture = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
+      } catch (s3Error) {
+        console.error("Error generating pre-signed URL:", s3Error);
+        // Leave it as is or handle it
+      }
+    }
+
+    return { statusCode: 200, headers, body: JSON.stringify(user) };
   } catch (error) {
     return { statusCode: 500, headers, body: JSON.stringify({ error: error.message }) };
   } finally {
