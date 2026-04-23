@@ -102,12 +102,47 @@ export const updateAdministrator = (id: number, a: Partial<Administrator>) => ap
 export const deleteAdministrator = (id: number)                             => apiFetch<{ deleted: boolean }>(URL.administrators, `/${id}`, 'DELETE');
 
 // ── Equipment ─────────────────────────────────────────────────────────────────
+// TODO: When switching to Cognito UUID as primary key:
+// - Update getAvailableEquipment parameter and filtering approach
+// - Update workerID lookup to use new user identifier
 type EquipmentFilter = Partial<Pick<Equipment, 'currentOwner' | 'checkoutStaff' | 'type'>> & ListOptions;
-export const getAllEquipment   = (f?: EquipmentFilter)                => apiFetch<Equipment[]>(URL.equipment, toQuery(f));
-export const getEquipment     = (id: number)                         => apiFetch<Equipment>(URL.equipment, `/${id}`);
-export const createEquipment  = (e: Omit<Equipment, 'equipmentID'>) => apiFetch<{ equipmentID: number }>(URL.equipment, '', 'POST', e);
-export const updateEquipment  = (id: number, e: Partial<Equipment>) => apiFetch<{ updated: boolean }>(URL.equipment, `/${id}`, 'PUT', e);
-export const deleteEquipment  = (id: number)                         => apiFetch<{ deleted: boolean }>(URL.equipment, `/${id}`, 'DELETE');
+export const getAllEquipment = (f?: EquipmentFilter) => 
+  apiFetch<Equipment[]>(URL.equipment, toQuery(f));
+export const getEquipment = (id: number) => apiFetch<Equipment>(URL.equipment, `/${id}`);
+
+export const checkoutEquipment = async (
+  equipmentID: number, 
+  bannerID: string
+) => {
+  // TODO: Get workerID from authenticated user (Cognito UUID mapping later)
+  // Currently uses bannerID from form for lookup
+  const workers = await getDeskWorkers({ user: bannerID });
+  const workerID = workers[0]?.workerID;
+  
+  return apiFetch<{ success: boolean }>(
+    URL.equipment, '/checkout', 'POST', 
+    { equipmentID, bannerID, workerID }
+  );
+};
+
+export const checkinEquipment = (equipmentID: number) =>
+  apiFetch<{ success: boolean }>(URL.equipment, '/checkin', 'POST', { equipmentID });
+
+interface ResidentInfo {
+  residentID: number;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+}
+
+export const getResidentByBannerId = (bannerID: string) =>
+  apiFetch<ResidentInfo | null>(URL.equipment, '/resident', 'POST', { bannerID });
+
+export const getAvailableEquipment = async () => {
+  const all = await getAllEquipment();
+  // Filter to items where currentOwner is null (available)
+  return all.filter(e => !e.currentOwner);
+};
 
 // ── Packages ──────────────────────────────────────────────────────────────────
 type PackageFilter = Partial<Pick<Package, 'owner' | 'type' | 'pickedUp' | 'emailSent' | 'requiresForwarding'>> & ListOptions;
