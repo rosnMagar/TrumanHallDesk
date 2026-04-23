@@ -8,28 +8,53 @@
 - Functions granted S3 access (write/read/delete)
 
 ### 2. Data Schema (`amplify/data/resource.ts`)
-- `User` model: id, email, name, avatarS3Key
-- `uploadAvatar` mutation: accepts userId, imageContent
-- `getAvatarUrl` query: accepts userId, s3Key
+- `User` model: id (required, auto-generated), email, name, avatarS3Key
+- `uploadAvatar` mutation: accepts userId, imageContent (base64), returns s3Key
+- `getAvatarUrl` query: accepts userId, s3Key, returns presigned URL
 - `deleteAvatar` mutation: placeholder
 
 ### 3. Lambda Functions
 - **uploadAvatar**: validates MIME (jpeg/png/webp), 5MB max, uploads to `profiles/{userId}/avatar.jpg`
 - **getPresignedUrl**: generates 1-hour presigned GET URL
-- **deleteAvatar**: placeholder (not implemented)
+- **deleteAvatar**: placeholder (NOT IMPLEMENTED - returns fake success)
 
 ### 4. Backend Registration (`amplify/backend.ts`)
 - All resources registered
 
+### 5. Bucket Configuration (`amplify_outputs.json`)
+- Bucket: `amplify-trumanhalldesk-ja-profilepicturesbucket46b-jf0dpo5msj41`
+- Region: us-east-2
+
 ## Needs Work
 
-### 1. Database Access (High Priority)
-The upload function currently just returns the S3 key. Need to update User record manually:
+### 1. deleteAvatar Lambda (High Priority)
+Still a placeholder - does NOT actually delete from S3. Needs S3 DeleteObjectCommand implementation.
+
+### 2. Frontend Integration (High Priority)
+ZERO avatar-related code exists in frontend:
+- No file picker component
+- No upload handling
+- No avatar display component
+- No API client integration (Amplify Schema client not wired up)
+- No base64 conversion utilities
+
+### 3. Database Access
+The upload function returns the S3 key. Client must manually update User record:
 ```typescript
-// Client must call both:
 const { data } = await client.mutations.uploadAvatar({ userId, imageContent })
 await client.models.User.update({ id: userId, avatarS3Key: data })
 ```
+
+### 4. Bucket Name Handling
+`getPresignedUrl` Lambda requires bucketName argument. Need to inject via env var or helper.
+
+## Test Plan
+1. Run `npx ampx sandbox`
+2. Create test user in database
+3. Upload image via mutation
+4. Verify S3 object created
+5. Fetch presigned URL
+6. Verify URL works
 Alternatively: grant function access to Data resource for direct update.
 
 ### 2. User Model Alignment
