@@ -5,15 +5,17 @@ import type {
 } from './types';
 
 // ── Per-resource API Gateway URLs (fill in .env.local after deploy) ───────────
+const baseUrl = import.meta.env.VITE_API_URL as string | undefined;
+
 const URL = {
-  users:          import.meta.env.VITE_USERS_API_URL          as string,
-  buildings:      import.meta.env.VITE_BUILDINGS_API_URL      as string,
-  rooms:          import.meta.env.VITE_ROOMS_API_URL          as string,
-  residents:      import.meta.env.VITE_RESIDENTS_API_URL      as string,
-  deskWorkers:    import.meta.env.VITE_DESKWORKERS_API_URL    as string,
-  administrators: import.meta.env.VITE_ADMINISTRATORS_API_URL as string,
-  equipment:      import.meta.env.VITE_EQUIPMENT_API_URL      as string,
-  packages:       import.meta.env.VITE_PACKAGES_API_URL       as string,
+  users:          (baseUrl ? `${baseUrl}/users` : import.meta.env.VITE_USERS_API_URL) as string,
+  buildings:      (baseUrl ? `${baseUrl}/buildings` : import.meta.env.VITE_BUILDINGS_API_URL) as string,
+  rooms:          (baseUrl ? `${baseUrl}/rooms` : import.meta.env.VITE_ROOMS_API_URL) as string,
+  residents:      (baseUrl ? `${baseUrl}/residents` : import.meta.env.VITE_RESIDENTS_API_URL) as string,
+  deskWorkers:    (baseUrl ? `${baseUrl}/deskWorkers` : import.meta.env.VITE_DESKWORKERS_API_URL) as string,
+  administrators: (baseUrl ? `${baseUrl}/administrators` : import.meta.env.VITE_ADMINISTRATORS_API_URL) as string,
+  equipment:      (baseUrl ? `${baseUrl}/equipment` : import.meta.env.VITE_EQUIPMENT_API_URL) as string,
+  packages:       (baseUrl ? `${baseUrl}/packages` : import.meta.env.VITE_PACKAGES_API_URL) as string,
 };
 
 // ── Auth header ───────────────────────────────────────────────────────────────
@@ -56,6 +58,8 @@ export const getUser          = (id: string)                   => apiFetch<User>
 export const createUser       = (u: User)                      => apiFetch<{ bannerID: string }>(URL.users, '', 'POST', u);
 export const updateUser       = (id: string, u: Partial<User>) => apiFetch<{ updated: boolean }>(URL.users, `/${id}`, 'PUT', u);
 export const deleteUser       = (id: string)                   => apiFetch<{ deleted: boolean }>(URL.users, `/${id}`, 'DELETE');
+export const getUserUploadUrl = (id: string, extension: string = 'jpg', contentType: string = 'image/jpeg') => 
+  apiFetch<{ uploadUrl: string, fileName: string }>(URL.users, `/${id}/upload-url?extension=${extension}&contentType=${encodeURIComponent(contentType)}`, 'GET');
 
 // ── Buildings ─────────────────────────────────────────────────────────────────
 type BuildingFilter = Partial<Pick<Building, 'buildingID'>> & ListOptions;

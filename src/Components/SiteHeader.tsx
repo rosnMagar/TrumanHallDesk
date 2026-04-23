@@ -5,10 +5,10 @@ import { IconDeviceDesktop, IconSettings, IconLogout } from '@tabler/icons-react
 import { useNavigate } from 'react-router-dom'
 import { useAuthenticator } from '@aws-amplify/ui-react'
 
-export type Tab = 'Inbound' | 'Outbound' | 'Lock-out' | 'Equipment' | 'Timeclock'
-export const TABS: Tab[] = ['Inbound', 'Outbound', 'Lock-out', 'Equipment', 'Timeclock']
+export type Tab = 'Inbound' | 'Outbound' | 'Lock-out' | 'Equipment' | 'Timeclock' | 'Picture Lookup'
+export const TABS: Tab[] = ['Inbound', 'Outbound', 'Lock-out', 'Equipment', 'Timeclock', 'Picture Lookup']
 
-export type AdminPage = 'allowed-users' | 'datastream-users' | 'maintain-student' | 'activity-cards' | 'activity-items' | 'timeclock-admin'
+export type AdminPage = 'allowed-users' | 'datastream-users' | 'maintain-student' | 'activity-cards' | 'activity-items' | 'timeclock-admin' | 'user-info-upload'
 
 interface SiteHeaderProps {
   activeTab: Tab
@@ -30,6 +30,7 @@ export default function SiteHeader({ activeTab, onTabChange, isAdmin = true, isA
     if (tab === 'Equipment') navigate('/equipment')
     if (tab === 'Lock-out') navigate('/lockout')
     if (tab === 'Timeclock') navigate('/timeclock')
+    if (tab === 'Picture Lookup') navigate('/picture-lookup')
   }
 
   const handleAdminPageClick = (page: AdminPage) => {
@@ -40,6 +41,7 @@ export default function SiteHeader({ activeTab, onTabChange, isAdmin = true, isA
     if (page === 'activity-cards') navigate('/admin/activity-cards')
     if (page === 'activity-items') navigate('/admin/activity-items')
     if (page === 'timeclock-admin') navigate('/admin/timeclock-logs')
+    if (page === 'user-info-upload') navigate('/admin/user-info-upload')
   }
 
   const adminPages: { id: AdminPage; label: string }[] = [
@@ -49,6 +51,7 @@ export default function SiteHeader({ activeTab, onTabChange, isAdmin = true, isA
     { id: 'activity-cards', label: 'Activity Cards' },
     { id: 'activity-items', label: 'Activity Items List' },
     { id: 'timeclock-admin', label: 'Timeclock' },
+    { id: 'user-info-upload', label: 'User Info Upload' },
   ]
 
   return (
