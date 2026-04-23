@@ -19,7 +19,7 @@ export const handler = async (event) => {
   }
 
   try {
-    const body = JSON.parse(event.body);
+    const body = JSON.parse(event.body || '{}');
     const { equipmentID } = body;
 
     if (!equipmentID) {
