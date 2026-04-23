@@ -8,7 +8,7 @@ import { useAuthenticator } from '@aws-amplify/ui-react'
 export type Tab = 'Inbound' | 'Outbound' | 'Lock-out' | 'Equipment' | 'Timeclock' | 'Picture Lookup'
 export const TABS: Tab[] = ['Inbound', 'Outbound', 'Lock-out', 'Equipment', 'Timeclock', 'Picture Lookup']
 
-export type AdminPage = 'allowed-users' | 'datastream-users' | 'maintain-student' | 'activity-cards' | 'activity-items' | 'timeclock-admin' | 'user-info-upload'
+export type AdminPage = 'allowed-users' | 'datastream-users' | 'maintain-student' | 'activity-cards' | 'activity-items' | 'timeclock-admin' | 'user-info-upload' | 'provision-worker'
 
 interface SiteHeaderProps {
   activeTab: Tab
@@ -42,6 +42,7 @@ export default function SiteHeader({ activeTab, onTabChange, isAdmin = true, isA
     if (page === 'activity-items') navigate('/admin/activity-items')
     if (page === 'timeclock-admin') navigate('/admin/timeclock-logs')
     if (page === 'user-info-upload') navigate('/admin/user-info-upload')
+    if (page === 'provision-worker') navigate('/admin/provision-worker')
   }
 
   const adminPages: { id: AdminPage; label: string }[] = [
@@ -52,6 +53,7 @@ export default function SiteHeader({ activeTab, onTabChange, isAdmin = true, isA
     { id: 'activity-items', label: 'Activity Items List' },
     { id: 'timeclock-admin', label: 'Timeclock' },
     { id: 'user-info-upload', label: 'User Info Upload' },
+    { id: 'provision-worker', label: 'Provision Desk Worker' },
   ]
 
   return (
