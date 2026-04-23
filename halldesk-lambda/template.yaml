@@ -129,6 +129,91 @@ Resources:
       Policies:
         - AWSLambdaBasicExecutionRole
 
+  # Equipment Lambdas
+  GetAllEquipmentFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: GetAllEquipment
+      Handler: getAllEquipment.handler
+      CodeUri: equipment/
+      Runtime: nodejs20.x
+      Timeout: 30
+      MemorySize: 128
+      Layers:
+        - Ref: MySQLLayerArn
+      Environment:
+        Variables:
+          DB_HOST: !Ref DBHost
+          DB_PORT: !Ref DBPort
+          DB_USER: !Ref DBUser
+          DB_PASSWORD: !Ref DBPassword
+          DB_NAME: !Ref DBName
+      Policies:
+        - AWSLambdaBasicExecutionRole
+
+  CheckoutEquipmentFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: CheckoutEquipment
+      Handler: checkoutEquipment.handler
+      CodeUri: equipment/
+      Runtime: nodejs20.x
+      Timeout: 30
+      MemorySize: 128
+      Layers:
+        - Ref: MySQLLayerArn
+      Environment:
+        Variables:
+          DB_HOST: !Ref DBHost
+          DB_PORT: !Ref DBPort
+          DB_USER: !Ref DBUser
+          DB_PASSWORD: !Ref DBPassword
+          DB_NAME: !Ref DBName
+      Policies:
+        - AWSLambdaBasicExecutionRole
+
+  CheckinEquipmentFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: CheckinEquipment
+      Handler: checkinEquipment.handler
+      CodeUri: equipment/
+      Runtime: nodejs20.x
+      Timeout: 30
+      MemorySize: 128
+      Layers:
+        - Ref: MySQLLayerArn
+      Environment:
+        Variables:
+          DB_HOST: !Ref DBHost
+          DB_PORT: !Ref DBPort
+          DB_USER: !Ref DBUser
+          DB_PASSWORD: !Ref DBPassword
+          DB_NAME: !Ref DBName
+      Policies:
+        - AWSLambdaBasicExecutionRole
+
+  GetResidentByBannerIdFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: GetResidentByBannerId
+      Handler: getResidentByBannerId.handler
+      CodeUri: equipment/
+      Runtime: nodejs20.x
+      Timeout: 30
+      MemorySize: 128
+      Layers:
+        - Ref: MySQLLayerArn
+      Environment:
+        Variables:
+          DB_HOST: !Ref DBHost
+          DB_PORT: !Ref DBPort
+          DB_USER: !Ref DBUser
+          DB_PASSWORD: !Ref DBPassword
+          DB_NAME: !Ref DBName
+      Policies:
+        - AWSLambdaBasicExecutionRole
+
   ApiGatewayApi:
     Type: AWS::Serverless::Api
     Properties:
@@ -176,13 +261,65 @@ Resources:
                 uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${UpdateUserFunction.Arn}/invocations"
                 httpMethod: POST
                 type: aws_proxy
-              responses: {}
+responses: {}
             delete:
               x-amazon-apigateway-integration:
                 uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DeleteUserFunction.Arn}/invocations"
                 httpMethod: POST
                 type: aws_proxy
-              responses: {}
+                responses: {}
+          /equipment:
+            options:
+              x-amazon-apigateway-integration:
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetAllEquipmentFunction.Arn}/invocations"
+                httpMethod: POST
+                type: aws_proxy
+                responses: {}
+            get:
+              x-amazon-apigateway-integration:
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetAllEquipmentFunction.Arn}/invocations"
+                httpMethod: POST
+                type: aws_proxy
+                responses: {}
+          /equipment/checkout:
+            options:
+              x-amazon-apigateway-integration:
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CheckoutEquipmentFunction.Arn}/invocations"
+                httpMethod: POST
+                type: aws_proxy
+                responses: {}
+            post:
+              x-amazon-apigateway-integration:
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CheckoutEquipmentFunction.Arn}/invocations"
+                httpMethod: POST
+                type: aws_proxy
+                responses: {}
+          /equipment/checkin:
+            options:
+              x-amazon-apigateway-integration:
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CheckinEquipmentFunction.Arn}/invocations"
+                httpMethod: POST
+                type: aws_proxy
+                responses: {}
+            post:
+              x-amazon-apigateway-integration:
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CheckinEquipmentFunction.Arn}/invocations"
+                httpMethod: POST
+                type: aws_proxy
+                responses: {}
+          /equipment/resident:
+            options:
+              x-amazon-apigateway-integration:
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetResidentByBannerIdFunction.Arn}/invocations"
+                httpMethod: POST
+                type: aws_proxy
+                responses: {}
+            post:
+              x-amazon-apigateway-integration:
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetResidentByBannerIdFunction.Arn}/invocations"
+                httpMethod: POST
+                type: aws_proxy
+                responses: {}
 
 Outputs:
   ApiUrl:
