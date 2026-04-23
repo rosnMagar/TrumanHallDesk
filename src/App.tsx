@@ -1,34 +1,45 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import ResidenceLife from './Pages/Inbound'
+import Outbound from './Pages/outbound'
+import ResidentLockout from './Pages/ResidentLockOut'
+import EquipmentCheckOut from './Pages/EquipmentCheckOut'
+import Timeclock from './Pages/Timeclock'
+import AllowedUsers from './Pages/AllowedUsers'
+import DatastreamUsers from './Pages/DatastreamUsers'
+import MaintainStudentList from './Pages/MaintainStudentList'
+import ActivityCards from './Pages/ActivityCards'
+import ActivityItemsList from './Pages/ActivityItemsList'
+import TimeclockLogs from './Pages/TimeclockLogs'
+import PictureLookup from './Pages/PictureLookup'
+import UserInfoUpload from './Pages/UserInfoUpload'
+import ProvisionWorker from './Pages/ProvisionWorker'
+import { Authenticator } from '@aws-amplify/ui-react'
+import '@aws-amplify/ui-react/styles.css'
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <Authenticator>
+      {() => (
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<ResidenceLife />} />
+            <Route path="/outbound" element={<Outbound />} />
+            <Route path="/lockout" element={<ResidentLockout />} />
+            <Route path="/equipment" element={<EquipmentCheckOut />} />
+            <Route path="/timeclock" element={<Timeclock />} />
+            <Route path="/picture-lookup" element={<PictureLookup />} />
+            <Route path="/admin/allowed-users" element={<AllowedUsers />} />
+            <Route path="/admin/datastream-users" element={<DatastreamUsers />} />
+            <Route path="/admin/maintain-student" element={<MaintainStudentList />} />
+            <Route path="/admin/activity-cards" element={<ActivityCards />} />
+            <Route path="/admin/activity-items" element={<ActivityItemsList />} />
+            <Route path="/admin/timeclock-logs" element={<TimeclockLogs />} />
+            <Route path="/admin/user-info-upload" element={<UserInfoUpload />} />
+            <Route path="/admin/provision-worker" element={<ProvisionWorker />} />
+          </Routes>
+        </BrowserRouter>
+      )}
+    </Authenticator>
   )
 }
 
