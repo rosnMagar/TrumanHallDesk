@@ -271,6 +271,27 @@ Resources:
         - S3CrudPolicy:
             BucketName: !Ref S3BucketName
 
+  CreateLockoutFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: CreateLockout
+      Handler: createLockout.handler
+      CodeUri: lockouts/
+      Runtime: nodejs20.x
+      Timeout: 30
+      MemorySize: 128
+      Layers:
+        - Ref: MySQLLayerArn
+      Environment:
+        Variables:
+          DB_HOST: !Ref DBHost
+          DB_PORT: !Ref DBPort
+          DB_USER: !Ref DBUser
+          DB_PASSWORD: !Ref DBPassword
+          DB_NAME: !Ref DBName
+      Policies:
+        - AWSLambdaBasicExecutionRole
+
   ApiGatewayApi:
     Type: AWS::Serverless::Api
     Properties:
@@ -280,6 +301,7 @@ Resources:
         info:
           title: TrumanHallDeskAPI
           version: "1.0"
+
         paths:
           /users:
             options:
@@ -400,6 +422,19 @@ Resources:
             get:
               x-amazon-apigateway-integration:
                 uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetUploadUrlFunction.Arn}/invocations"
+                httpMethod: POST
+                type: aws_proxy
+              responses: {}
+          /lockouts:
+            options:
+              x-amazon-apigateway-integration:
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CreateLockoutFunction.Arn}/invocations"
+                httpMethod: POST
+                type: aws_proxy
+              responses: {}
+            post:
+              x-amazon-apigateway-integration:
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CreateLockoutFunction.Arn}/invocations"
                 httpMethod: POST
                 type: aws_proxy
               responses: {}
