@@ -5,7 +5,7 @@ import type {
 } from './types';
 
 // ── Per-resource API Gateway URLs (fill in .env.local after deploy) ───────────
-const baseUrl = import.meta.env.VITE_API_URL as string | undefined;
+const baseUrl = (import.meta.env.VITE_API_URL as string) || '';
 
 const URL = {
   users: (baseUrl ? `${baseUrl}/users` : import.meta.env.VITE_USERS_API_URL) as string,
@@ -14,9 +14,9 @@ const URL = {
   residents: (baseUrl ? `${baseUrl}/residents` : import.meta.env.VITE_RESIDENTS_API_URL) as string,
   deskWorkers: (baseUrl ? `${baseUrl}/deskWorkers` : import.meta.env.VITE_DESKWORKERS_API_URL) as string,
   administrators: (baseUrl ? `${baseUrl}/administrators` : import.meta.env.VITE_ADMINISTRATORS_API_URL) as string,
-  equipment:      (baseUrl ? `${baseUrl}/equipment` : import.meta.env.VITE_EQUIPMENT_API_URL) as string,
-  packages:       (baseUrl ? `${baseUrl}/packages` : import.meta.env.VITE_PACKAGES_API_URL) as string,
-  lockouts:       (baseUrl ? `${baseUrl}/lockouts` : '') as string,
+  equipment: (baseUrl ? `${baseUrl}/equipment` : import.meta.env.VITE_EQUIPMENT_API_URL) as string,
+  packages: (baseUrl ? `${baseUrl}/packages` : import.meta.env.VITE_PACKAGES_API_URL) as string,
+  lockouts: (baseUrl ? `${baseUrl}/lockouts` : '') as string,
   admin: (baseUrl ? `${baseUrl}/admin` : '') as string,
 };
 
@@ -157,11 +157,11 @@ export const provisionWorker = (data: ProvisionWorkerPayload) => apiFetch<{ mess
 
 // ── Packages ──────────────────────────────────────────────────────────────────
 type PackageFilter = Partial<Pick<Package, 'owner' | 'type' | 'pickedUp' | 'emailSent' | 'requiresForwarding'>> & ListOptions;
-export const getPackages      = (f?: PackageFilter)                => apiFetch<Package[]>(URL.packages, toQuery(f));
-export const getPackage       = (id: number)                       => apiFetch<Package>(URL.packages, `/${id}`);
-export const createPackage    = (p: Omit<Package, 'uniqueID'>)    => apiFetch<{ uniqueID: number }>(URL.packages, '', 'POST', p);
-export const updatePackage    = (id: number, p: Partial<Package>) => apiFetch<{ updated: boolean }>(URL.packages, `/${id}`, 'PUT', p);
-export const deletePackage    = (id: number)                       => apiFetch<{ deleted: boolean }>(URL.packages, `/${id}`, 'DELETE');
+export const getPackages = (f?: PackageFilter) => apiFetch<Package[]>(URL.packages, toQuery(f));
+export const getPackage = (id: number) => apiFetch<Package>(URL.packages, `/${id}`);
+export const createPackage = (p: Omit<Package, 'uniqueID'>) => apiFetch<{ uniqueID: number }>(URL.packages, '', 'POST', p);
+export const updatePackage = (id: number, p: Partial<Package>) => apiFetch<{ updated: boolean }>(URL.packages, `/${id}`, 'PUT', p);
+export const deletePackage = (id: number) => apiFetch<{ deleted: boolean }>(URL.packages, `/${id}`, 'DELETE');
 
 // ── Lockouts ──────────────────────────────────────────────────────────────────
 interface CreateLockoutPayload {
