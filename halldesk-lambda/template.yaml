@@ -186,6 +186,7 @@ Resources:
         info:
           title: TrumanHallDeskAPI
           version: "1.0"
+
         paths:
           /users:
             options:

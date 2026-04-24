@@ -7,6 +7,17 @@ const headers = {
   'Access-Control-Allow-Headers': 'Content-Type, Authorization'
 };
 
+function extractSub(token) {
+  try {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const payload = JSON.parse(Buffer.from(base64, 'base64').toString('utf8'));
+    return payload.sub;
+  } catch {
+    return null;
+  }
+}
+
 export const handler = async (event) => {
   let connection;
 
@@ -19,10 +30,10 @@ export const handler = async (event) => {
     const { ownerBannerID, checkoutBannerID, keyNumber, phoneNumber } = payload;
 
     if (!ownerBannerID || !checkoutBannerID || !keyNumber) {
-      return { 
-        statusCode: 400, 
-        headers, 
-        body: JSON.stringify({ error: 'ownerBannerID, checkoutBannerID, and keyNumber are required' }) 
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({ error: 'ownerBannerID, checkoutBannerID, and keyNumber are required' })
       };
     }
 
@@ -34,39 +45,47 @@ export const handler = async (event) => {
       database: process.env.DB_NAME
     });
 
-    // 1. Get residentID for owner
-    const [residentRows] = await connection.execute('SELECT residentID FROM resident WHERE user = ?', [ownerBannerID]);
+    const [residentRows] = await connection.execute('SELECT residentID FROM resident WHERE residentID = ?', [ownerBannerID]);
     if (residentRows.length === 0) {
       return { statusCode: 404, headers, body: JSON.stringify({ error: 'Resident not found for the provided Banner ID.' }) };
     }
     const residentID = residentRows[0].residentID;
 
-    // 2. Get workerID for checkout staff
-    const [workerRows] = await connection.execute('SELECT workerID FROM deskWorker WHERE user = ?', [checkoutBannerID]);
+    let workerBannerID = checkoutBannerID;
+    const authHeader = event.headers?.Authorization || event.headers?.authorization;
+    if (authHeader?.startsWith('Bearer ')) {
+      const sub = extractSub(authHeader.slice(7));
+      if (sub) {
+        const [userToBannerRows] = await connection.execute('SELECT bannerID FROM userToBanner WHERE userID = ?', [sub]);
+        if (userToBannerRows.length > 0) {
+          workerBannerID = userToBannerRows[0].bannerID;
+        }
+      }
+    }
+
+    const [workerRows] = await connection.execute('SELECT workerID FROM deskWorker WHERE workerID = ?', [workerBannerID]);
     if (workerRows.length === 0) {
       return { statusCode: 404, headers, body: JSON.stringify({ error: 'Desk worker not found for the current user.' }) };
     }
     const workerID = workerRows[0].workerID;
 
-    // 3. Update phone number if provided
     if (phoneNumber) {
       await connection.execute('UPDATE `user` SET phoneNumber = ? WHERE bannerID = ?', [phoneNumber, ownerBannerID]);
     }
 
-    // 4. Create lockout equipment entry
     const [insertResult] = await connection.execute(
-      `INSERT INTO equipment (currentOwner, type, checkoutTime, checkoutStaff, description) 
+      `INSERT INTO equipment (currentOwner, type, checkoutTime, checkoutStaff, description)
        VALUES (?, 'keys', NOW(), ?, ?)`,
       [residentID, workerID, keyNumber]
     );
 
-    return { 
-      statusCode: 201, 
-      headers, 
-      body: JSON.stringify({ 
+    return {
+      statusCode: 201,
+      headers,
+      body: JSON.stringify({
         message: 'Lockout created successfully',
         equipmentID: insertResult.insertId
-      }) 
+      })
     };
   } catch (error) {
     return { statusCode: 500, headers, body: JSON.stringify({ error: error.message }) };
