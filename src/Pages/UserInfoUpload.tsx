@@ -15,6 +15,7 @@ export default function UserInfoUpload() {
   const [searchStatus, setSearchStatus] = useState<{ type: 'error' | 'success', message: string } | null>(null)
   
   const [currentUser, setCurrentUser] = useState<User | null>(null)
+  const [displayPicture, setDisplayPicture] = useState<string | null>(null)
   
   // Custom hooks for API calls
   const { execute: fetchUser, loading: isLoading } = useLambda(getUser)
@@ -37,9 +38,11 @@ export default function UserInfoUpload() {
     setSearchStatus(null)
     setUpdateStatus(null)
     setFile(null)
+    setDisplayPicture(null)
     try {
       const user = await fetchUser(searchBannerId.trim())
       setCurrentUser(user)
+      setDisplayPicture(user.idPicture || null)
       setFirstName(user.firstName || '')
       setLastName(user.lastName || '')
       setEmail(user.email || '')
@@ -79,6 +82,8 @@ export default function UserInfoUpload() {
         }
         
         finalIdPicture = fileName
+        // Use local preview immediately as the new display picture
+        setDisplayPicture(URL.createObjectURL(file))
       }
       
       // Update the user information
@@ -88,15 +93,11 @@ export default function UserInfoUpload() {
         email,
         phoneNumber,
         homeAddress,
-        idPicture: finalIdPicture !== currentUser.idPicture ? finalIdPicture : undefined
+        idPicture: file ? finalIdPicture : undefined
       })
       
       setUpdateStatus({ type: 'success', message: 'User information updated successfully!' })
       setFile(null)
-      
-      // Refresh current user data to get the updated image URL (pre-signed URL for viewing)
-      const updatedUser = await fetchUser(currentUser.bannerID)
-      setCurrentUser(updatedUser)
       
     } catch (err: any) {
       setUpdateStatus({ type: 'error', message: err.message || 'An error occurred during update' })
@@ -195,6 +196,8 @@ export default function UserInfoUpload() {
                     >
                       {file ? (
                         <Image src={URL.createObjectURL(file)} w={150} h={150} fit="cover" />
+                      ) : displayPicture ? (
+                        <Image src={displayPicture} w={150} h={150} fit="cover" />
                       ) : currentUser.idPicture ? (
                         <Image src={currentUser.idPicture} w={150} h={150} fit="cover" />
                       ) : (
