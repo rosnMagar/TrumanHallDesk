@@ -60,6 +60,7 @@ export interface Equipment {
   borrowerBannerID?: string;
   borrowerPhone?: string;
   residentID?: number;
+  checkedOut?: 'Y' | 'N';
 }
 
 export interface Package {

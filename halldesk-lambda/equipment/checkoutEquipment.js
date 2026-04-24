@@ -12,7 +12,7 @@ const headers = {
   'Content-Type': 'application/json',
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Amz-Date, X-Api-Key, X-Amz-Security-Token, X-Amz-User-Agent'
 };
 
 export const handler = async (event) => {
@@ -91,7 +91,7 @@ export const handler = async (event) => {
     const residentID = residents[0].residentID;
 
     await connection.execute(
-      'UPDATE equipment SET currentOwner = ?, checkoutTime = NOW(), checkoutStaff = ? WHERE equipmentID = ?',
+      'UPDATE equipment SET currentOwner = ?, checkoutTime = NOW(), checkoutStaff = ?, checkedOut = \'Y\' WHERE equipmentID = ?',
       [residentID, workerID, equipmentID]
     );
 

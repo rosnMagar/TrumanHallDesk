@@ -4,7 +4,7 @@ const headers = {
   'Content-Type': 'application/json',
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Amz-Date, X-Api-Key, X-Amz-Security-Token, X-Amz-User-Agent'
 };
 
 export const handler = async (event) => {
@@ -35,7 +35,7 @@ export const handler = async (event) => {
     });
 
     await connection.execute(
-      'UPDATE equipment SET currentOwner = NULL, checkoutTime = NULL, checkoutStaff = NULL WHERE equipmentID = ?',
+      'UPDATE equipment SET checkedOut = \'N\' WHERE equipmentID = ?',
       [equipmentID]
     );
 

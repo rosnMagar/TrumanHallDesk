@@ -3,6 +3,7 @@ import ResidenceLife from './Pages/Inbound'
 import Outbound from './Pages/outbound'
 import ResidentLockout from './Pages/ResidentLockOut'
 import EquipmentCheckOut from './Pages/EquipmentCheckOut'
+import EquipmentInventory from './Pages/EquipmentInventory'
 import Timeclock from './Pages/Timeclock'
 import AllowedUsers from './Pages/AllowedUsers'
 import DatastreamUsers from './Pages/DatastreamUsers'
@@ -26,6 +27,7 @@ function App() {
             <Route path="/outbound" element={<Outbound />} />
             <Route path="/lockout" element={<ResidentLockout />} />
             <Route path="/equipment" element={<EquipmentCheckOut />} />
+            <Route path="/equipment/inventory" element={<EquipmentInventory />} />
             <Route path="/timeclock" element={<Timeclock />} />
             <Route path="/picture-lookup" element={<PictureLookup />} />
             <Route path="/admin/allowed-users" element={<AllowedUsers />} />

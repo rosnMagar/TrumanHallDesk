@@ -111,19 +111,16 @@ type EquipmentFilter = Partial<Pick<Equipment, 'currentOwner' | 'checkoutStaff' 
 export const getAllEquipment = (f?: EquipmentFilter) =>
   apiFetch<Equipment[]>(URL.equipment, toQuery(f));
 export const getEquipment = (id: number) => apiFetch<Equipment>(URL.equipment, `/${id}`);
+export const createEquipment = (data: { type: string, description?: string }) =>
+  apiFetch<{ success: true, equipmentID: number }>(URL.equipment, '', 'POST', data);
 
 export const checkoutEquipment = async (
   equipmentID: number,
   bannerID: string
 ) => {
-  // TODO: Get workerID from authenticated user (Cognito UUID mapping later)
-  // Currently uses bannerID from form for lookup
-  const workers = await getDeskWorkers({ user: bannerID });
-  const workerID = workers[0]?.workerID;
-
   return apiFetch<{ success: boolean }>(
     URL.equipment, '/checkout', 'POST',
-    { equipmentID, bannerID, workerID }
+    { equipmentID, bannerID }
   );
 };
 
@@ -142,8 +139,8 @@ export const getResidentByBannerId = (bannerID: string) =>
 
 export const getAvailableEquipment = async () => {
   const all = await getAllEquipment();
-  // Filter to items where currentOwner is null (available)
-  return all.filter(e => !e.currentOwner);
+  // Filter to items where checkedOut is NOT 'Y' (available)
+  return all.filter(e => e.checkedOut !== 'Y');
 };
 
 // ── Admin ─────────────────────────────────────────────────────────────────────
