@@ -4,7 +4,7 @@ const headers = {
   'Content-Type': 'application/json',
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Amz-Date, X-Api-Key, X-Amz-Security-Token, X-Amz-User-Agent'
 };
 
 export const handler = async (event) => {
@@ -34,10 +34,11 @@ export const handler = async (event) => {
         r.residentID,
         CONCAT(u.lastName, ', ', u.firstName) AS borrowerName,
         u.bannerID AS borrowerBannerID,
-        u.phoneNumber AS borrowerPhone
+        u.phoneNumber AS borrowerPhone,
+        e.checkedOut
       FROM equipment e
       LEFT JOIN resident r ON e.currentOwner = r.residentID
-      LEFT JOIN \`user\` u ON r.\`user\` = u.bannerID
+      LEFT JOIN \`user\` u ON r.residentID = u.bannerID
       ORDER BY e.equipmentID
     `);
 

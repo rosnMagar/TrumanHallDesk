@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { signOut } from 'aws-amplify/auth'
 import { Group, Button, Text, Box, Modal, Stack, UnstyledButton, Menu } from '@mantine/core'
 import { AppShell } from '@mantine/core'
 import { IconDeviceDesktop, IconSettings, IconLogout } from '@tabler/icons-react'
@@ -43,6 +44,10 @@ export default function SiteHeader({ activeTab, onTabChange, isAdmin = true, isA
     if (page === 'timeclock-admin') navigate('/admin/timeclock-logs')
     if (page === 'user-info-upload') navigate('/admin/user-info-upload')
     if (page === 'provision-worker') navigate('/admin/provision-worker')
+  }
+
+  const handleSignOut = async () => {
+    await signOut()
   }
 
   const adminPages: { id: AdminPage; label: string }[] = [
@@ -106,7 +111,7 @@ export default function SiteHeader({ activeTab, onTabChange, isAdmin = true, isA
             <Menu.Dropdown>
               <Menu.Item
                 leftSection={<IconLogout size={14} />}
-                onClick={() => signOut()}
+                onClick={handleSignOut}
               >
                 Sign Out
               </Menu.Item>
