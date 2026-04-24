@@ -1,5 +1,9 @@
+/*
+Everything should work now for frontend
+*/
+
 import { useState } from 'react'
-import { Stack, Title } from '@mantine/core'
+import { Title } from '@mantine/core'
 import { type Tab } from '../Components/SiteHeader'
 import PageLayout from '../Components/PageLayout'
 import ActionTable from '../Components/ActionTable'
@@ -40,20 +44,18 @@ export default function ActivityCards() {
   }
 
   return (
-    <PageLayout activeTab={activeTab} onTabChange={setActiveTab} isAdminPage={true}>
-      <Stack gap="lg">
-        <Title order={2}>Activity Cards</Title>
+    <PageLayout activeTab={activeTab} onTabChange={setActiveTab} isAdmin={true} adminLabel="Activity Cards" isAdminPage={true}>
+      <Title order={2}>Activity Cards</Title>
 
-        <ActionTable
-          data={cards}
-          columns={columns}
-          searchableFields={['room', 'name', 'bannerId']}
-          filterFields={filterFields}
-          filterOptions={filterOptions}
-          onDeleteSelected={handleDeleteSelected}
-          deleteLabel="Delete Selected"
-        />
-      </Stack>
+      <ActionTable
+        data={cards}
+        columns={columns}
+        searchableFields={['room', 'name', 'bannerId']}
+        filterFields={filterFields}
+        filterOptions={filterOptions}
+        onDeleteSelected={handleDeleteSelected}
+        deleteLabel="Delete Selected"
+      />
     </PageLayout>
   )
 }

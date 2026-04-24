@@ -1,5 +1,6 @@
+//Same action table filter issue as the other pages
 import { useState } from 'react'
-import { Stack, Title } from '@mantine/core'
+import { Title } from '@mantine/core'
 import { type Tab } from '../Components/SiteHeader'
 import PageLayout from '../Components/PageLayout'
 import DataTable from '../Components/DataTable'
@@ -53,18 +54,16 @@ export default function TimeclockLogs() {
   const [logs] = useState<TimeclockLog[]>(INITIAL_LOGS)
 
   return (
-    <PageLayout activeTab={activeTab} onTabChange={setActiveTab}>
-      <Stack gap="lg">
-        <Title order={2}>Timeclock</Title>
+    <PageLayout activeTab={activeTab} onTabChange={setActiveTab} isAdmin={true} adminLabel="Timeclock" isAdminPage={true}>
+      <Title order={2}>Timeclock</Title>
 
-        <DataTable
-          data={logs}
-          columns={columns}
-          searchableFields={['building', 'firstName', 'lastName', 'bannerId']}
-          filterFields={filterFields}
-          filterOptions={filterOptions}
-        />
-      </Stack>
+      <DataTable
+        data={logs}
+        columns={columns}
+        searchableFields={['building', 'firstName', 'lastName', 'bannerId']}
+        filterFields={filterFields}
+        filterOptions={filterOptions}
+      />
     </PageLayout>
   )
 }

@@ -1,3 +1,4 @@
+//Looks good for the frontend
 import { useState } from 'react'
 import {
   Group, Button, Text, TextInput, Paper, Title,
@@ -54,7 +55,7 @@ export default function ResidentLockout() {
               onChange={setField('keyNumber')}
             />
           </Stack>
-          <Paper withBorder p="md" radius="md" bg="gray.0">
+          <Paper withBorder shadow="xs" p="md" radius="md" bg="gray.0">
             <Text fw={600} size="sm" mb="sm">Desk Attendant Instructions</Text>
             <List size="sm" c="dimmed" spacing={4}>
               <List.Item>Please inform the resident they will be charged $10</List.Item>

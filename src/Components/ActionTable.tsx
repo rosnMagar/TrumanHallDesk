@@ -1,9 +1,9 @@
 import { useState, useMemo } from 'react'
 import {
-  Group, Button, Text, TextInput, Paper, Stack,
-  Table, Pagination, Modal, Select, Checkbox,
+  Group, Button, Text, TextInput, Paper,
+  Table, Pagination, Select, Collapse, Checkbox,
 } from '@mantine/core'
-import { IconSearch, IconAdjustments, IconArrowUp, IconArrowDown } from '@tabler/icons-react'
+import { IconSearch, IconAdjustments, IconArrowUp, IconArrowDown, IconX } from '@tabler/icons-react'
 
 export type SortOrder = 'asc' | 'desc'
 
@@ -51,7 +51,7 @@ export default function ActionTable<T extends { id: number }>({
   const [search, setSearch] = useState('')
   const [sortKey, setSortKey] = useState<string | null>(null)
   const [sortOrder, setSortOrder] = useState<SortOrder>('asc')
-  const [filterModalOpen, setFilterModalOpen] = useState(false)
+  const [filterOpen, setFilterOpen] = useState(false)
   const [filterValues, setFilterValues] = useState<Record<string, string | null>>({})
   const [currentPage, setCurrentPage] = useState(1)
   const [selectedIds, setSelectedIds] = useState<number[]>([])
@@ -67,6 +67,11 @@ export default function ActionTable<T extends { id: number }>({
 
   const handleFilterChange = (key: string, value: string | null) => {
     setFilterValues(prev => ({ ...prev, [key]: value }))
+    setCurrentPage(1)
+  }
+
+  const handleClearFilters = () => {
+    setFilterValues({})
     setCurrentPage(1)
   }
 
@@ -116,11 +121,6 @@ export default function ActionTable<T extends { id: number }>({
     currentPage * itemsPerPage
   )
 
-  const handleClearFilters = () => {
-    setFilterValues({})
-    setCurrentPage(1)
-  }
-
   const handleSelectAll = () => {
     if (selectedIds.length === paginatedData.length) {
       setSelectedIds([])
@@ -148,14 +148,15 @@ export default function ActionTable<T extends { id: number }>({
 
   return (
     <>
-      <Group justify="space-between" mb="sm" wrap="nowrap">
-        <Group gap="sm" style={{ minWidth: 220 }}>
+      <Group justify="space-between" mb="sm">
+        <Group gap="sm">
           {filterFields.length > 0 && (
             <Button
-              variant="default"
+              variant={filterOpen ? 'filled' : 'default'}
+              color="brand-purple"
               size="sm"
               leftSection={<IconAdjustments size={14} />}
-              onClick={() => setFilterModalOpen(true)}
+              onClick={() => setFilterOpen(o => !o)}
             >
               Filter
             </Button>
@@ -188,7 +189,7 @@ export default function ActionTable<T extends { id: number }>({
           )}
           {onExportSelected && (
             <Button
-              color="grape"
+              color="brand-purple"
               size="sm"
               onClick={handleExportSelected}
               disabled={selectedIds.length === 0}
@@ -199,7 +200,36 @@ export default function ActionTable<T extends { id: number }>({
         </Group>
       </Group>
 
-      <Paper withBorder radius="md" style={{ overflow: 'hidden' }}>
+      {filterFields.length > 0 && (
+        <Collapse in={filterOpen}>
+          <Paper withBorder shadow="xs" p="md" radius="md" mb="sm">
+            <Group align="flex-end" gap="md">
+              {filterFields.map(field => (
+                <Select
+                  key={String(field.key)}
+                  label={field.label}
+                  placeholder={`All ${field.label}s`}
+                  data={filterOptions[String(field.key)] || []}
+                  value={filterValues[String(field.key)] || null}
+                  onChange={(value) => handleFilterChange(String(field.key), value)}
+                  clearable
+                  style={{ flex: 1 }}
+                />
+              ))}
+              <Button
+                variant="default"
+                leftSection={<IconX size={14} />}
+                onClick={handleClearFilters}
+                mb={1}
+              >
+                Clear
+              </Button>
+            </Group>
+          </Paper>
+        </Collapse>
+      )}
+
+      <Paper withBorder shadow="xs" radius="md" style={{ overflow: 'hidden' }} mih={400}>
         <Table withColumnBorders highlightOnHover verticalSpacing="md">
           <Table.Thead>
             <Table.Tr>
@@ -253,46 +283,14 @@ export default function ActionTable<T extends { id: number }>({
         </Table>
       </Paper>
 
-      {totalPages > 1 && (
-        <Group justify="center" mt="md">
-          <Pagination
-            total={totalPages}
-            value={currentPage}
-            onChange={setCurrentPage}
-          />
-        </Group>
-      )}
-
-      {filterFields.length > 0 && (
-        <Modal
-          opened={filterModalOpen}
-          onClose={() => setFilterModalOpen(false)}
-          title="Filter Options"
-          centered
-        >
-          <Stack gap="md">
-            {filterFields.map(field => (
-              <Select
-                key={String(field.key)}
-                label={field.label}
-                placeholder={`All ${field.label}s`}
-                data={filterOptions[String(field.key)] || []}
-                value={filterValues[String(field.key)] || null}
-                onChange={(value) => handleFilterChange(String(field.key), value)}
-                clearable
-              />
-            ))}
-            <Group justify="flex-end">
-              <Button variant="default" onClick={handleClearFilters}>
-                Clear
-              </Button>
-              <Button onClick={() => setFilterModalOpen(false)}>
-                Apply
-              </Button>
-            </Group>
-          </Stack>
-        </Modal>
-      )}
+      <Group justify="center" mt="md" style={{ visibility: totalPages > 1 ? 'visible' : 'hidden' }}>
+        <Pagination
+          total={totalPages}
+          value={currentPage}
+          onChange={setCurrentPage}
+          color="brand-purple"
+        />
+      </Group>
     </>
   )
 }

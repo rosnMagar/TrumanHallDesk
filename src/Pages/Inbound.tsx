@@ -1,3 +1,4 @@
+//Looks good for now frontend wise. 
 import { useState } from 'react'
 import {
   Group, Button, Text, TextInput, Paper, Title,
@@ -78,7 +79,7 @@ export default function ResidenceLife() {
             />
           </Stack>
           <Stack gap="md">
-            <Paper withBorder p="md" radius="md" bg="gray.0">
+            <Paper withBorder shadow="xs" p="md" radius="md" bg="gray.0">
               <Text fw={600} size="sm" mb="sm">Resident Information</Text>
               <Stack gap="xs">
                 <TextInput placeholder="Name" value={mail.infoName} onChange={setMailField('infoName')} />

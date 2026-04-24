@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import {
-  Group, Button, Text, TextInput, Paper, Title,
-  SimpleGrid, Stack, Table, Pagination,
+  Button, Text, TextInput, Paper, Title,
+  SimpleGrid, Stack,
 } from '@mantine/core'
 import { type Tab } from '../Components/SiteHeader'
-import { IconCheck, IconX, IconSearch, IconAdjustments } from '@tabler/icons-react'
+import { IconCheck, IconX } from '@tabler/icons-react'
 import PageLayout from '../Components/PageLayout'
+import ActionTable, { type Column, type FilterField } from '../Components/ActionTable'
 import { useFormFields } from '../hooks/useFormField'
 
 interface EquipmentRow {
@@ -38,8 +39,6 @@ const INITIAL_ROWS: EquipmentRow[] = [
 
 export default function EquipmentCheckOut() {
   const [activeTab, setActiveTab] = useState<Tab>('Equipment')
-  const [activePage, setActivePage] = useState(2)
-  const [search, setSearch] = useState('')
   const [rows, setRows] = useState<EquipmentRow[]>(INITIAL_ROWS)
 
   const { form, setField } = useFormFields<CheckoutForm>({
@@ -51,15 +50,56 @@ export default function EquipmentCheckOut() {
     setRows(prev => prev.map(r => r.id === id ? { ...r, available: false } : r))
   }
 
-  const filteredRows = rows.filter(r =>
-    !search ||
-    r.equipment.toLowerCase().includes(search.toLowerCase()) ||
-    r.borrower.toLowerCase().includes(search.toLowerCase())
-  )
+  const columns: Column<EquipmentRow>[] = [
+    { key: 'equipment', label: 'Equipment', sortable: true },
+    { key: 'dateOut', label: 'Date Out', sortable: true },
+    {
+      key: 'borrower', label: 'Borrower', sortable: true,
+      render: (row) => <Text lineClamp={2} size="sm">{row.borrower}</Text>,
+    },
+    { key: 'bannerId', label: 'Banner ID', sortable: true },
+    {
+      key: 'daysOut', label: 'Days Out', sortable: true,
+      render: (row) => <>{row.daysOut ?? ''}</>,
+    },
+    { key: 'phone', label: 'Phone #', sortable: true },
+    {
+      key: 'available', label: 'Availability',
+      render: (row) => row.equipment ? (
+        row.available
+          ? <IconCheck size={16} color="green" />
+          : <IconX size={16} color="red" />
+      ) : null,
+    },
+    {
+      key: 'id', label: 'Action',
+      render: (row) => row.equipment ? (
+        row.available ? (
+          <Button size="xs" color="brand-purple" onClick={() => handleBorrow(row.id)}>
+            Borrow
+          </Button>
+        ) : (
+          <Button size="xs" variant="light" color="brand-purple">
+            Forward
+          </Button>
+        )
+      ) : null,
+    },
+  ]
+
+  const filterFields: FilterField<EquipmentRow>[] = [
+    { key: 'available', label: 'Availability' },
+  ]
+
+  const filterOptions = {
+    available: [
+      { value: 'true', label: 'Available' },
+      { value: 'false', label: 'Unavailable' },
+    ],
+  }
 
   return (
     <PageLayout activeTab={activeTab} onTabChange={setActiveTab}>
-
       <Paper withBorder shadow="xs" p="xl" radius="md">
         <Title order={4} mb="lg">Equipment Check Out</Title>
         <Stack gap="md">
@@ -100,85 +140,15 @@ export default function EquipmentCheckOut() {
       </Paper>
 
       <Stack gap="sm">
-        <Group justify="space-between">
-          <Title order={3}>Inventory</Title>
-          <Group gap="sm">
-            <Button variant="default" size="sm" leftSection={<IconAdjustments size={14} />}>
-              Filter
-            </Button>
-            <TextInput
-              placeholder="Search"
-              leftSection={<IconSearch size={14} />}
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              w={180}
-            />
-          </Group>
-        </Group>
-
-        <Paper withBorder radius="md" style={{ overflow: 'hidden' }}>
-          <Table withColumnBorders highlightOnHover verticalSpacing="md">
-            <Table.Thead>
-              <Table.Tr>
-                <Table.Th fw={700}>Equipment</Table.Th>
-                <Table.Th fw={700}>Date Out</Table.Th>
-                <Table.Th fw={700}>Borrower</Table.Th>
-                <Table.Th fw={700}>Banner ID</Table.Th>
-                <Table.Th fw={700}>Days Out</Table.Th>
-                <Table.Th fw={700}>Phone #</Table.Th>
-                <Table.Th fw={700}>Availability</Table.Th>
-                <Table.Th fw={700}>Action</Table.Th>
-              </Table.Tr>
-            </Table.Thead>
-            <Table.Tbody>
-              {filteredRows.map(row => (
-                <Table.Tr key={row.id}>
-                  <Table.Td>{row.equipment}</Table.Td>
-                  <Table.Td>{row.dateOut}</Table.Td>
-                  <Table.Td>
-                    <Text lineClamp={2} size="sm">{row.borrower}</Text>
-                  </Table.Td>
-                  <Table.Td>{row.bannerId}</Table.Td>
-                  <Table.Td>{row.daysOut ?? ''}</Table.Td>
-                  <Table.Td>{row.phone}</Table.Td>
-                  <Table.Td>
-                    {row.equipment ? (
-                      row.available
-                        ? <IconCheck size={16} color="green" />
-                        : <IconX size={16} color="red" />
-                    ) : null}
-                  </Table.Td>
-                  <Table.Td>
-                    {row.equipment && (
-                      row.available ? (
-                        <Button size="xs" color="brand-blue" onClick={() => handleBorrow(row.id)}>
-                          Borrow
-                        </Button>
-                      ) : (
-                        <Button size="xs" variant="light" color="brand-blue">
-                          Forward
-                        </Button>
-                      )
-                    )}
-                  </Table.Td>
-                </Table.Tr>
-              ))}
-            </Table.Tbody>
-          </Table>
-        </Paper>
-
-        <Group justify="center">
-          <Pagination
-            total={10}
-            value={activePage}
-            onChange={setActivePage}
-            color="brand-blue"
-            siblings={1}
-            boundaries={1}
-          />
-        </Group>
+        <Title order={3}>Inventory</Title>
+        <ActionTable
+          data={rows}
+          columns={columns}
+          searchableFields={['equipment', 'borrower', 'bannerId']}
+          filterFields={filterFields}
+          filterOptions={filterOptions}
+        />
       </Stack>
-
     </PageLayout>
   )
 }

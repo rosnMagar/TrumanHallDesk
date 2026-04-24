@@ -1,5 +1,8 @@
+//Frontend good for now
+
+
 import { useState } from 'react'
-import { Stack, Title } from '@mantine/core'
+import { Title } from '@mantine/core'
 import { type Tab } from '../Components/SiteHeader'
 import PageLayout from '../Components/PageLayout'
 import ActionTable from '../Components/ActionTable'
@@ -21,6 +24,10 @@ const INITIAL_ITEMS: ActivityItem[] = [
   { id: 1, room: 'Truman 101', name: 'John Smith', phone: '555-1234', bannerId: '123456789', itemDescription: 'Board Games', checkoutDate: '01/15/2024', checkoutStaff: 'JDoe', checkinDate: '01/16/2024', checkinStaff: 'JDoe' },
   { id: 2, room: 'Miller 205', name: 'Jane Doe', phone: '555-5678', bannerId: '987654321', itemDescription: 'Projector', checkoutDate: '01/17/2024', checkoutStaff: 'ASmith', checkinDate: '', checkinStaff: '' },
   { id: 3, room: 'Cross 302', name: 'Bob Johnson', phone: '555-9012', bannerId: '456789123', itemDescription: 'Sports Equipment', checkoutDate: '01/18/2024', checkoutStaff: 'JDoe', checkinDate: '', checkinStaff: '' },
+  { id: 4, room: 'Cross 302', name: 'Bob Johnson', phone: '555-9012', bannerId: '456789123', itemDescription: 'Sports Equipment', checkoutDate: '01/18/2024', checkoutStaff: 'JDoe', checkinDate: '', checkinStaff: '' },
+  { id: 5, room: 'Cross 302', name: 'Bob Johnson', phone: '555-9012', bannerId: '456789123', itemDescription: 'Sports Equipment', checkoutDate: '01/18/2024', checkoutStaff: 'JDoe', checkinDate: '', checkinStaff: '' },
+  { id: 6, room: 'Cross 302', name: 'Bob Johnson', phone: '555-9012', bannerId: '456789123', itemDescription: 'Sports Equipment', checkoutDate: '01/18/2024', checkoutStaff: 'JDoe', checkinDate: '', checkinStaff: '' },
+  { id: 7, room: 'Cross 302', name: 'Bob Johnson', phone: '555-9012', bannerId: '456789123', itemDescription: 'Sports Equipment', checkoutDate: '01/18/2024', checkoutStaff: 'JDoe', checkinDate: '', checkinStaff: '' },
 ]
 
 const columns = [
@@ -57,20 +64,18 @@ export default function ActivityItemsList() {
   }
 
   return (
-    <PageLayout activeTab={activeTab} onTabChange={setActiveTab} isAdminPage={true}>
-      <Stack gap="lg">
-        <Title order={2}>Activity Items List</Title>
+    <PageLayout activeTab={activeTab} onTabChange={setActiveTab} isAdmin={true} adminLabel="Activity Items List" isAdminPage={true}>
+      <Title order={2}>Activity Items List</Title>
 
-        <ActionTable
-          data={items}
-          columns={columns}
-          searchableFields={['room', 'name', 'itemDescription', 'bannerId']}
-          filterFields={filterFields}
-          filterOptions={filterOptions}
-          onDeleteSelected={handleDeleteSelected}
-          onExportSelected={handleExportSelected}
-        />
-      </Stack>
+      <ActionTable
+        data={items}
+        columns={columns}
+        searchableFields={['room', 'name', 'itemDescription', 'bannerId']}
+        filterFields={filterFields}
+        filterOptions={filterOptions}
+        onDeleteSelected={handleDeleteSelected}
+        onExportSelected={handleExportSelected}
+      />
     </PageLayout>
   )
 }

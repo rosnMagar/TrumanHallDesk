@@ -1,3 +1,5 @@
+//Sumbit button is slightly off center(might not be worth the time to fix).
+
 import { useState } from 'react'
 import {
   Group, Button, TextInput, Paper, Title,
@@ -32,112 +34,110 @@ export default function MaintainStudentList() {
   }
 
   return (
-    <PageLayout activeTab={activeTab} onTabChange={setActiveTab}>
-      <Stack gap="lg">
-        <Title order={2}>Maintain Student List</Title>
+    <PageLayout activeTab={activeTab} onTabChange={setActiveTab} isAdmin={true} adminLabel="Maintain Student List" isAdminPage={true}>
+      <Title order={2}>Maintain Student List</Title>
 
-        <Paper withBorder p="xl" radius="md">
-            <Title order={4} mb="md">Change or Remove Student</Title>
-            <Group gap="md">
-              <TextInput
-                label="Banner ID"
-                placeholder="Enter Banner ID"
-                value={searchBannerId}
-                onChange={(e) => setSearchBannerId(e.target.value)}
-                style={{ flex: 1 }}
-              />
-              <Group align="flex-end">
-                <Button color="grape" onClick={handleSearch}>
-                  Submit
-                </Button>
-              </Group>
-            </Group>
-          </Paper>
-
-          <Divider my="md" />
-
-          <Paper withBorder p="xl" radius="md">
-            <Title order={4} mb="md">Add a New Student</Title>
-            <Stack gap="md">
-              <SimpleGrid cols={6} spacing="md">
-                <TextInput
-                  label="Banner ID"
-                  placeholder="Banner ID"
-                  value={newBannerId}
-                  onChange={(e) => setNewBannerId(e.target.value)}
-                />
-                <TextInput
-                  label="Name"
-                  placeholder="Name"
-                  value={newName}
-                  onChange={(e) => setNewName(e.target.value)}
-                />
-                <TextInput
-                  label="Phone"
-                  placeholder="Phone"
-                  value={newPhone}
-                  onChange={(e) => setNewPhone(e.target.value)}
-                />
-                <TextInput
-                  label="Email"
-                  placeholder="Email"
-                  value={newEmail}
-                  onChange={(e) => setNewEmail(e.target.value)}
-                />
-                <TextInput
-                  label="Code"
-                  placeholder="Code"
-                  value={newCode}
-                  onChange={(e) => setNewCode(e.target.value)}
-                />
-                <TextInput
-                  label="Building/Room"
-                  placeholder="Building/Room"
-                  value={newBuildingRoom}
-                  onChange={(e) => setNewBuildingRoom(e.target.value)}
-                />
-              </SimpleGrid>
-
-              <Checkbox
-                label="Special Use Card"
-                checked={specialUseCard}
-                onChange={(e) => setSpecialUseCard(e.currentTarget.checked)}
-              />
-
-              <SimpleGrid cols={3} spacing="md">
-                <TextInput
-                  label="Offcampus Address 1"
-                  placeholder="Address 1"
-                  value={offcampusAddr1}
-                  onChange={(e) => setOffcampusAddr1(e.target.value)}
-                />
-                <TextInput
-                  label="Offcampus Address 2"
-                  placeholder="Address 2"
-                  value={offcampusAddr2}
-                  onChange={(e) => setOffcampusAddr2(e.target.value)}
-                />
-                <TextInput
-                  label="City/State/Zip"
-                  placeholder="City, State ZIP"
-                  value={cityStateZip}
-                  onChange={(e) => setCityStateZip(e.target.value)}
-                />
-              </SimpleGrid>
-
-              <Group justify="flex-end">
-                <Button color="grape" onClick={handleAdd}>
-                  Add
-                </Button>
-              </Group>
-            </Stack>
-          </Paper>
-
-          <Group gap="lg">
-            <Button variant="link" color="grape">View Student List by Hall</Button>
-            <Button variant="link" color="grape">Export Off-Campus Addresses</Button>
+      <Paper withBorder shadow="xs" p="xl" radius="md">
+        <Title order={4} mb="md">Change or Remove Student</Title>
+        <Group gap="md">
+          <TextInput
+            label="Banner ID"
+            placeholder="Enter Banner ID"
+            value={searchBannerId}
+            onChange={(e) => setSearchBannerId(e.target.value)}
+            style={{ flex: 1 }}
+          />
+          <Group align="flex-end">
+            <Button color="brand-blue" onClick={handleSearch}>
+              Submit
+            </Button>
           </Group>
-      </Stack>
+        </Group>
+      </Paper>
+
+      <Divider />
+
+      <Paper withBorder shadow="xs" p="xl" radius="md">
+        <Title order={4} mb="md">Add a New Student</Title>
+        <Stack gap="md">
+          <SimpleGrid cols={6} spacing="md">
+            <TextInput
+              label="Banner ID"
+              placeholder="Banner ID"
+              value={newBannerId}
+              onChange={(e) => setNewBannerId(e.target.value)}
+            />
+            <TextInput
+              label="Name"
+              placeholder="Name"
+              value={newName}
+              onChange={(e) => setNewName(e.target.value)}
+            />
+            <TextInput
+              label="Phone"
+              placeholder="Phone"
+              value={newPhone}
+              onChange={(e) => setNewPhone(e.target.value)}
+            />
+            <TextInput
+              label="Email"
+              placeholder="Email"
+              value={newEmail}
+              onChange={(e) => setNewEmail(e.target.value)}
+            />
+            <TextInput
+              label="Code"
+              placeholder="Code"
+              value={newCode}
+              onChange={(e) => setNewCode(e.target.value)}
+            />
+            <TextInput
+              label="Building/Room"
+              placeholder="Building/Room"
+              value={newBuildingRoom}
+              onChange={(e) => setNewBuildingRoom(e.target.value)}
+            />
+          </SimpleGrid>
+
+          <Checkbox
+            label="Special Use Card"
+            checked={specialUseCard}
+            onChange={(e) => setSpecialUseCard(e.currentTarget.checked)}
+          />
+
+          <SimpleGrid cols={3} spacing="md">
+            <TextInput
+              label="Offcampus Address 1"
+              placeholder="Address 1"
+              value={offcampusAddr1}
+              onChange={(e) => setOffcampusAddr1(e.target.value)}
+            />
+            <TextInput
+              label="Offcampus Address 2"
+              placeholder="Address 2"
+              value={offcampusAddr2}
+              onChange={(e) => setOffcampusAddr2(e.target.value)}
+            />
+            <TextInput
+              label="City/State/Zip"
+              placeholder="City, State ZIP"
+              value={cityStateZip}
+              onChange={(e) => setCityStateZip(e.target.value)}
+            />
+          </SimpleGrid>
+
+          <Group justify="flex-end">
+            <Button color="brand-blue" onClick={handleAdd}>
+              Add
+            </Button>
+          </Group>
+        </Stack>
+      </Paper>
+
+      <Group gap="lg">
+        <Button variant="link" color="brand-blue">View Student List by Hall</Button>
+        <Button variant="link" color="brand-blue">Export Off-Campus Addresses</Button>
+      </Group>
     </PageLayout>
   )
 }
