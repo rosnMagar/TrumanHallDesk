@@ -4,21 +4,24 @@ import { Group, Button, Text, Box, Modal, Stack, UnstyledButton, Menu } from '@m
 import { AppShell } from '@mantine/core'
 import { IconDeviceDesktop, IconSettings, IconLogout } from '@tabler/icons-react'
 import { useNavigate } from 'react-router-dom'
+import { useAuthenticator } from '@aws-amplify/ui-react'
 
 export type Tab = 'Inbound' | 'Outbound' | 'Lock-out' | 'Equipment' | 'Timeclock' | 'Picture Lookup'
 export const TABS: Tab[] = ['Inbound', 'Outbound', 'Lock-out', 'Equipment', 'Timeclock', 'Picture Lookup']
 
-export type AdminPage = 'allowed-users' | 'datastream-users' | 'maintain-student' | 'activity-cards' | 'activity-items' | 'timeclock-admin' | 'user-info-upload'
+export type AdminPage = 'allowed-users' | 'datastream-users' | 'maintain-student' | 'activity-cards' | 'activity-items' | 'timeclock-admin' | 'user-info-upload' | 'provision-worker'
 
 interface SiteHeaderProps {
   activeTab: Tab
   onTabChange?: (tab: Tab) => void
   isAdmin?: boolean
   isAdminPage?: boolean
+  adminLabel?: string
 }
 
-export default function SiteHeader({ activeTab, onTabChange, isAdmin = true, isAdminPage = false }: SiteHeaderProps) {
+export default function SiteHeader({ activeTab, onTabChange, isAdmin = true, isAdminPage = false, adminLabel = 'BNB Desk' }: SiteHeaderProps) {
   const navigate = useNavigate()
+  const { signOut } = useAuthenticator()
   const [adminModalOpen, setAdminModalOpen] = useState(false)
 
   const handleTabClick = (tab: Tab) => {
@@ -40,6 +43,7 @@ export default function SiteHeader({ activeTab, onTabChange, isAdmin = true, isA
     if (page === 'activity-items') navigate('/admin/activity-items')
     if (page === 'timeclock-admin') navigate('/admin/timeclock-logs')
     if (page === 'user-info-upload') navigate('/admin/user-info-upload')
+    if (page === 'provision-worker') navigate('/admin/provision-worker')
   }
 
   const handleSignOut = async () => {
@@ -54,6 +58,7 @@ export default function SiteHeader({ activeTab, onTabChange, isAdmin = true, isA
     { id: 'activity-items', label: 'Activity Items List' },
     { id: 'timeclock-admin', label: 'Timeclock' },
     { id: 'user-info-upload', label: 'User Info Upload' },
+    { id: 'provision-worker', label: 'Provision Desk Worker' },
   ]
 
   return (
@@ -87,7 +92,7 @@ export default function SiteHeader({ activeTab, onTabChange, isAdmin = true, isA
             <Menu.Target>
               <UnstyledButton>
                 <Group gap={4}>
-                  <Text size="sm">BNB Desk</Text>
+                  <Text size="sm">{adminLabel}</Text>
                   <Box
                     w={32} h={32}
                     style={{

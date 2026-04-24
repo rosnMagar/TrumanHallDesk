@@ -12,6 +12,7 @@ import ActivityItemsList from './Pages/ActivityItemsList'
 import TimeclockLogs from './Pages/TimeclockLogs'
 import PictureLookup from './Pages/PictureLookup'
 import UserInfoUpload from './Pages/UserInfoUpload'
+import ProvisionWorker from './Pages/ProvisionWorker'
 import { Authenticator } from '@aws-amplify/ui-react'
 import '@aws-amplify/ui-react/styles.css'
 
@@ -34,6 +35,7 @@ function App() {
             <Route path="/admin/activity-items" element={<ActivityItemsList />} />
             <Route path="/admin/timeclock-logs" element={<TimeclockLogs />} />
             <Route path="/admin/user-info-upload" element={<UserInfoUpload />} />
+            <Route path="/admin/provision-worker" element={<ProvisionWorker />} />
           </Routes>
         </BrowserRouter>
       )}
