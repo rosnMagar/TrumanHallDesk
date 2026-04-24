@@ -1,0 +1,230 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: TrumanHallDesk API - User CRUD Operations
+
+Parameters:
+  DBHost:
+    Type: String
+    Description: RDS Database Host Endpoint
+  DBPort:
+    Type: String
+    Default: "3306"
+  DBUser:
+    Type: String
+    Default: admin
+  DBPassword:
+    Type: String
+    NoEcho: true
+  DBName:
+    Type: String
+    Default: TrumanHallDesk
+  MySQLLayerArn:
+    Type: String
+    Default: arn:aws:lambda:us-east-2:132483690728:layer:mysql2-layer:2
+    Description: ARN of the mysql2 Lambda Layer
+  S3BucketName:
+    Type: String
+    Description: S3 Bucket containing user images
+    Default: "amzn-halldesk-s3-132483690728-us-east-2-an"
+
+Resources:
+  GetAllUsersFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: GetAllUsers
+      Handler: getAllUsers.handler
+      CodeUri: user/
+      Runtime: nodejs20.x
+      Timeout: 30
+      MemorySize: 128
+      Layers:
+        - Ref: MySQLLayerArn
+      Environment:
+        Variables:
+          DB_HOST: !Ref DBHost
+          DB_PORT: !Ref DBPort
+          DB_USER: !Ref DBUser
+          DB_PASSWORD: !Ref DBPassword
+          DB_NAME: !Ref DBName
+          S3_BUCKET_NAME: !Ref S3BucketName
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - S3ReadPolicy:
+            BucketName: !Ref S3BucketName
+
+  GetUserByIdFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: GetUserById
+      Handler: getUserById.handler
+      CodeUri: user/
+      Runtime: nodejs20.x
+      Timeout: 30
+      MemorySize: 128
+      Layers:
+        - Ref: MySQLLayerArn
+      Environment:
+        Variables:
+          DB_HOST: !Ref DBHost
+          DB_PORT: !Ref DBPort
+          DB_USER: !Ref DBUser
+          DB_PASSWORD: !Ref DBPassword
+          DB_NAME: !Ref DBName
+          S3_BUCKET_NAME: !Ref S3BucketName
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - S3ReadPolicy:
+            BucketName: !Ref S3BucketName
+
+  CreateUserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: CreateUser
+      Handler: createUser.handler
+      CodeUri: user/
+      Runtime: nodejs20.x
+      Timeout: 30
+      MemorySize: 128
+      Layers:
+        - Ref: MySQLLayerArn
+      Environment:
+        Variables:
+          DB_HOST: !Ref DBHost
+          DB_PORT: !Ref DBPort
+          DB_USER: !Ref DBUser
+          DB_PASSWORD: !Ref DBPassword
+          DB_NAME: !Ref DBName
+      Policies:
+        - AWSLambdaBasicExecutionRole
+
+  UpdateUserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: UpdateUser
+      Handler: updateUser.handler
+      CodeUri: user/
+      Runtime: nodejs20.x
+      Timeout: 30
+      MemorySize: 128
+      Layers:
+        - Ref: MySQLLayerArn
+      Environment:
+        Variables:
+          DB_HOST: !Ref DBHost
+          DB_PORT: !Ref DBPort
+          DB_USER: !Ref DBUser
+          DB_PASSWORD: !Ref DBPassword
+          DB_NAME: !Ref DBName
+      Policies:
+        - AWSLambdaBasicExecutionRole
+
+  DeleteUserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: DeleteUser
+      Handler: deleteUser.handler
+      CodeUri: user/
+      Runtime: nodejs20.x
+      Timeout: 30
+      MemorySize: 128
+      Layers:
+        - Ref: MySQLLayerArn
+      Environment:
+        Variables:
+          DB_HOST: !Ref DBHost
+          DB_PORT: !Ref DBPort
+          DB_USER: !Ref DBUser
+          DB_PASSWORD: !Ref DBPassword
+          DB_NAME: !Ref DBName
+      Policies:
+        - AWSLambdaBasicExecutionRole
+
+  GetUploadUrlFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: GetUploadUrl
+      Handler: getUploadUrl.handler
+      CodeUri: s3/
+      Runtime: nodejs20.x
+      Timeout: 30
+      MemorySize: 128
+      Environment:
+        Variables:
+          S3_BUCKET_NAME: !Ref S3BucketName
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - S3CrudPolicy:
+            BucketName: !Ref S3BucketName
+
+  ApiGatewayApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: dev
+      DefinitionBody:
+        openapi: "3.0"
+        info:
+          title: TrumanHallDeskAPI
+          version: "1.0"
+        paths:
+          /users:
+            options:
+              x-amazon-apigateway-integration:
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetAllUsersFunction.Arn}/invocations"
+                httpMethod: POST
+                type: aws_proxy
+              responses: {}
+            get:
+              x-amazon-apigateway-integration:
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetAllUsersFunction.Arn}/invocations"
+                httpMethod: POST
+                type: aws_proxy
+              responses: {}
+            post:
+              x-amazon-apigateway-integration:
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CreateUserFunction.Arn}/invocations"
+                httpMethod: POST
+                type: aws_proxy
+              responses: {}
+          /users/{bannerID}:
+            options:
+              x-amazon-apigateway-integration:
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetAllUsersFunction.Arn}/invocations"
+                httpMethod: POST
+                type: aws_proxy
+              responses: {}
+            get:
+              x-amazon-apigateway-integration:
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetUserByIdFunction.Arn}/invocations"
+                httpMethod: POST
+                type: aws_proxy
+              responses: {}
+            put:
+              x-amazon-apigateway-integration:
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${UpdateUserFunction.Arn}/invocations"
+                httpMethod: POST
+                type: aws_proxy
+              responses: {}
+            delete:
+              x-amazon-apigateway-integration:
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DeleteUserFunction.Arn}/invocations"
+                httpMethod: POST
+                type: aws_proxy
+              responses: {}
+          /users/{bannerID}/upload-url:
+            options:
+              x-amazon-apigateway-integration:
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetAllUsersFunction.Arn}/invocations"
+                httpMethod: POST
+                type: aws_proxy
+              responses: {}
+            get:
+              x-amazon-apigateway-integration:
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetUploadUrlFunction.Arn}/invocations"
+                httpMethod: POST
+                type: aws_proxy
+              responses: {}
+
+Outputs:
+  ApiUrl:
+    Description: API Gateway endpoint URL
+    Value: !Sub "https://${ApiGatewayApi}.execute-api.${AWS::Region}.amazonaws.com/dev"
