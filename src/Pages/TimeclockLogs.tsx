@@ -83,13 +83,13 @@ const filterFields = [
 
 const filterOptions: Record<string, { value: string; label: string }[]> = {
   building: [
-    "Ryle",
-    "BNB",
-    "Missouri",
-    "Centennial",
-    "Dobson",
-    "West",
-    "Campbell",
+    "Ryle Hall",
+    "Blanton-Nason Brewer Hall",
+    "Missouri Hall",
+    "Centennial Hall",
+    "Dobson Hall",
+    "West Hall",
+    "Campbell Hall",
     "Grim",
   ].map((v) => ({ value: v, label: v })),
   inOut: [

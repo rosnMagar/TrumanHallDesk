@@ -91,7 +91,7 @@ export default function ResidentLockout() {
                   onClick={handleSearch}
                   loading={isLoadingUser}
                   leftSection={<IconSearch size={16} />}
-                  color="brand-purple"
+                  color="brand-blue"
                 >
                   Lookup
                 </Button>

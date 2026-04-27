@@ -119,7 +119,7 @@ export default function ProvisionWorker() {
 
             <Button 
               type="submit"
-              color="brand-purple"
+              color="brand-blue"
               mt="md"
               loading={isSubmitting}
               leftSection={<IconUserPlus size={18} />}

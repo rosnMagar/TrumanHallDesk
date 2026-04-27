@@ -10,7 +10,7 @@ import { getUser, createEquipment } from '../api/client'
 import { IconCheck, IconAlertCircle, IconPlus, IconList } from '@tabler/icons-react'
 import { useNavigate } from 'react-router-dom'
 import PageLayout from '../Components/PageLayout'
-import type { Tab } from '../Components/ActionTable'
+import { type Tab } from '../Components/SiteHeader'
 
 interface CheckoutForm {
   bannerId: string
@@ -119,9 +119,10 @@ export default function EquipmentCheckOut() {
 
   return (
     <PageLayout activeTab={activeTab} onTabChange={setActiveTab}>
-      <Group justify="space-between" mb="lg">
+      <Group justify="space-between">
         <Title order={2}>Equipment Management</Title>
         <Button
+          color="brand-blue"
           variant="light"
           leftSection={<IconList size={18} />}
           onClick={() => navigate('/equipment/inventory')}
@@ -134,7 +135,6 @@ export default function EquipmentCheckOut() {
         <Alert
           icon={error ? <IconAlertCircle size={16} /> : <IconCheck size={16} />}
           color={error ? 'red' : 'green'}
-          mb="md"
           withCloseButton
           onClose={() => { setError(null); setSuccess(null) }}
         >
@@ -156,7 +156,7 @@ export default function EquipmentCheckOut() {
                 style={{ flex: 1 }}
                 onKeyDown={(e) => e.key === 'Enter' && handleBannerSearch()}
               />
-              <Button onClick={handleBannerSearch} loading={searchLoading}>Search</Button>
+              <Button color="brand-blue" onClick={handleBannerSearch} loading={searchLoading}>Search</Button>
             </Group>
           </Stack>
         </Paper>
@@ -188,7 +188,6 @@ export default function EquipmentCheckOut() {
               <Stack gap="sm" style={{ flex: 1 }}>
                 <Title order={3} mb={0}>{user?.firstName} {user?.lastName}</Title>
                 <Divider w={100} />
-
                 <Stack gap={4}>
                   <Group gap="xs">
                     <Text fw={700} size="sm" w={80}>Banner ID:</Text>
@@ -201,11 +200,8 @@ export default function EquipmentCheckOut() {
                     </Group>
                   )}
                 </Stack>
-
                 <Alert color="blue" variant="light" py="xs" mt="md">
-                  <Text size="xs">
-                    Verified student record. Eligible to borrow equipment.
-                  </Text>
+                  <Text size="xs">Verified student record. Eligible to borrow equipment.</Text>
                 </Alert>
               </Stack>
             </Group>
@@ -224,7 +220,6 @@ export default function EquipmentCheckOut() {
                   Add New Item
                 </Button>
               </Group>
-
               <SimpleGrid cols={3} spacing="md">
                 <Select
                   placeholder="Item 1 (Required)"
@@ -255,7 +250,7 @@ export default function EquipmentCheckOut() {
 
             <Group justify="flex-end">
               <Button variant="default" onClick={() => setShowForm(false)}>Cancel</Button>
-              <Button onClick={handleCheckout} loading={checkoutLoading}>
+              <Button color="brand-blue" onClick={handleCheckout} loading={checkoutLoading}>
                 Complete Borrow
               </Button>
             </Group>
@@ -283,7 +278,7 @@ export default function EquipmentCheckOut() {
             value={newEqDesc}
             onChange={(e) => setNewEqDesc(e.currentTarget.value)}
           />
-          <Button fullWidth onClick={handleAddEquipment} loading={isAdding}>
+          <Button color="brand-blue" fullWidth onClick={handleAddEquipment} loading={isAdding}>
             Add to Inventory
           </Button>
         </Stack>
