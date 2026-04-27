@@ -1,6 +1,5 @@
 -- ============================================================
--- TrumanHallDesk Database Schema
--- Generated from ERD
+-- TrumanHallDesk Database Schema (Updated to reflect current DB state)
 -- ============================================================
 
 CREATE DATABASE IF NOT EXISTS TrumanHallDesk;
@@ -45,13 +44,12 @@ CREATE TABLE rooms (
 -- Resident
 -- ============================================================
 CREATE TABLE resident (
-    residentID    INT          NOT NULL AUTO_INCREMENT,
-    `user`        VARCHAR(20)  NOT NULL,  -- FK -> user.bannerID
+    residentID    VARCHAR(20)  NOT NULL,  -- Banner ID
     dateCreated   DATE,
     roomID        VARCHAR(20),            -- FK -> rooms.roomID
     building      VARCHAR(10),            -- FK -> buildings.buildingID
     PRIMARY KEY (residentID),
-    FOREIGN KEY (`user`)   REFERENCES `user`(bannerID)
+    FOREIGN KEY (residentID)   REFERENCES `user`(bannerID)
         ON UPDATE CASCADE ON DELETE RESTRICT,
     FOREIGN KEY (roomID)   REFERENCES rooms(roomID)
         ON UPDATE CASCADE ON DELETE SET NULL,
@@ -63,11 +61,10 @@ CREATE TABLE resident (
 -- Desk Worker
 -- ============================================================
 CREATE TABLE deskWorker (
-    workerID          INT          NOT NULL AUTO_INCREMENT,
-    `user`            VARCHAR(20)  NOT NULL,  -- FK -> user.bannerID
+    workerID          VARCHAR(20)  NOT NULL,  -- Banner ID
     assignedBuilding  VARCHAR(10),            -- FK -> buildings.buildingID
     PRIMARY KEY (workerID),
-    FOREIGN KEY (`user`)             REFERENCES `user`(bannerID)
+    FOREIGN KEY (workerID)           REFERENCES `user`(bannerID)
         ON UPDATE CASCADE ON DELETE RESTRICT,
     FOREIGN KEY (assignedBuilding) REFERENCES buildings(buildingID)
         ON UPDATE CASCADE ON DELETE SET NULL
@@ -77,13 +74,12 @@ CREATE TABLE deskWorker (
 -- Administrator
 -- ============================================================
 CREATE TABLE administrator (
-    adminID           INT          NOT NULL AUTO_INCREMENT,
-    `user`            VARCHAR(20)  NOT NULL,  -- FK -> user.bannerID
+    adminID           VARCHAR(20)  NOT NULL,  -- Banner ID
     assignedBuilding  VARCHAR(10),            -- FK -> buildings.buildingID
     officeNumber      VARCHAR(20),
-    notes             TEXT,                   -- "Row 3" from ERD (extra notes field)
+    notes             TEXT,
     PRIMARY KEY (adminID),
-    FOREIGN KEY (`user`)             REFERENCES `user`(bannerID)
+    FOREIGN KEY (adminID)            REFERENCES `user`(bannerID)
         ON UPDATE CASCADE ON DELETE RESTRICT,
     FOREIGN KEY (assignedBuilding) REFERENCES buildings(buildingID)
         ON UPDATE CASCADE ON DELETE SET NULL
@@ -93,8 +89,8 @@ CREATE TABLE administrator (
 -- Works_For: Desk Worker works under Administrator (1:M)
 -- ============================================================
 CREATE TABLE worksFor (
-    workerID  INT NOT NULL,
-    adminID   INT NOT NULL,
+    workerID  VARCHAR(20) NOT NULL,
+    adminID   VARCHAR(20) NOT NULL,
     PRIMARY KEY (workerID, adminID),
     FOREIGN KEY (workerID) REFERENCES deskWorker(workerID)
         ON UPDATE CASCADE ON DELETE CASCADE,
@@ -104,30 +100,28 @@ CREATE TABLE worksFor (
 
 -- ============================================================
 -- Equipment
---   Checked_Out: CurrentOwner -> Resident (who currently has the item)
---   Liable:      CheckoutStaff -> DeskWorker (who processed the checkout)
 -- ============================================================
-CREATE TABLE equipment (
-    equipmentID   INT          NOT NULL AUTO_INCREMENT,
-    currentOwner  INT,                    -- FK -> resident.residentID  (Checked_Out)
-    `type`        VARCHAR(100),
-    checkoutTime  DATETIME,
-    checkoutStaff INT,                    -- FK -> deskWorker.workerID  (Liable)
-    `description` TEXT,
-    PRIMARY KEY (equipmentID),
-    FOREIGN KEY (currentOwner)  REFERENCES resident(residentID)
-        ON UPDATE CASCADE ON DELETE SET NULL,
-    FOREIGN KEY (checkoutStaff) REFERENCES deskWorker(workerID)
-        ON UPDATE CASCADE ON DELETE SET NULL
-);
+CREATE TABLE `equipment` (
+  `equipmentID` int NOT NULL AUTO_INCREMENT,
+  `currentOwner` varchar(20) DEFAULT NULL,
+  `type` varchar(100) DEFAULT NULL,
+  `checkoutTime` datetime DEFAULT NULL,
+  `checkoutStaff` varchar(20) DEFAULT NULL,
+  `description` text,
+  `checkedOut` varchar(1) DEFAULT 'N',
+  PRIMARY KEY (`equipmentID`),
+  KEY `equipment_ibfk_1` (`currentOwner`),
+  KEY `equipment_ibfk_2` (`checkoutStaff`),
+  CONSTRAINT `equipment_ibfk_1` FOREIGN KEY (`currentOwner`) REFERENCES `resident` (`residentID`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `equipment_ibfk_2` FOREIGN KEY (`checkoutStaff`) REFERENCES `deskWorker` (`workerID`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=132 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- ============================================================
 -- Packages
---   Recipient: linked to Resident (1 Resident : M Packages)
 -- ============================================================
 CREATE TABLE packages (
     uniqueID           INT          NOT NULL AUTO_INCREMENT,
-    `owner`            INT,                -- FK -> resident.residentID  (Recipient)
+    `owner`            VARCHAR(20),        -- FK -> resident.residentID
     trackingID         VARCHAR(100),
     receivedDate       DATE,
     emailSent          TINYINT(1)   DEFAULT 0,

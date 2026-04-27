@@ -55,6 +55,12 @@ export interface Equipment {
   checkoutTime?: string;    // ISO datetime
   checkoutStaff?: number;   // workerID FK
   description?: string;
+  // Joined fields from getAllEquipment
+  borrowerName?: string;
+  borrowerBannerID?: string;
+  borrowerPhone?: string;
+  residentID?: number;
+  checkedOut?: 'Y' | 'N';
 }
 
 export interface Package {

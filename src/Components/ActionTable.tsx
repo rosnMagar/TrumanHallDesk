@@ -7,6 +7,8 @@ import { IconSearch, IconAdjustments, IconArrowUp, IconArrowDown, IconX } from '
 
 export type SortOrder = 'asc' | 'desc'
 
+export type { Tab } from './SiteHeader'
+
 export interface Column<T> {
   key: keyof T
   label: string
@@ -17,6 +19,14 @@ export interface Column<T> {
 export interface FilterField<T> {
   key: keyof T
   label: string
+}
+
+export interface ActionButton<T> {
+  label: string
+  onClick: (row: T) => void
+  disabled?: (row: T) => boolean
+  variant?: 'filled' | 'light' | 'default'
+  color?: string
 }
 
 interface ActionTableProps<T extends { id: number }> {
@@ -32,6 +42,7 @@ interface ActionTableProps<T extends { id: number }> {
   onExportSelected?: (ids: number[]) => void
   exportLabel?: string
   deleteLabel?: string
+  actionButtons?: ActionButton<T>[]
 }
 
 export default function ActionTable<T extends { id: number }>({
@@ -47,6 +58,7 @@ export default function ActionTable<T extends { id: number }>({
   onExportSelected,
   exportLabel = 'Export Records',
   deleteLabel = 'Delete Selected',
+  actionButtons = [],
 }: ActionTableProps<T>) {
   const [search, setSearch] = useState('')
   const [sortKey, setSortKey] = useState<string | null>(null)
@@ -239,26 +251,29 @@ export default function ActionTable<T extends { id: number }>({
                   indeterminate={selectedIds.length > 0 && selectedIds.length < paginatedData.length}
                   onChange={handleSelectAll}
                 />
-              </Table.Th>
-              {columns.map(col => (
-                <Table.Th
-                  key={String(col.key)}
-                  fw={700}
-                  onClick={col.sortable ? () => handleSort(String(col.key)) : undefined}
-                  style={col.sortable ? { cursor: 'pointer' } : undefined}
-                >
-                  {col.label}
-                  {col.sortable && sortKey === col.key && (
-                    sortOrder === 'asc' ? <IconArrowUp size={14} /> : <IconArrowDown size={14} />
-                  )}
-                </Table.Th>
-              ))}
-            </Table.Tr>
+</Table.Th>
+                {columns.map(col => (
+                  <Table.Th
+                    key={String(col.key)}
+                    fw={700}
+                    onClick={col.sortable ? () => handleSort(String(col.key)) : undefined}
+                    style={col.sortable ? { cursor: 'pointer' } : undefined}
+                  >
+                    {col.label}
+                    {col.sortable && sortKey === col.key && (
+                      sortOrder === 'asc' ? <IconArrowUp size={14} /> : <IconArrowDown size={14} />
+                    )}
+                  </Table.Th>
+                ))}
+                {actionButtons.length > 0 && (
+                  <Table.Th fw={700}>Actions</Table.Th>
+                )}
+              </Table.Tr>
           </Table.Thead>
           <Table.Tbody>
             {paginatedData.length === 0 ? (
               <Table.Tr>
-                <Table.Td colSpan={columns.length + 1}>
+                <Table.Td colSpan={columns.length + (actionButtons.length > 0 ? 1 : 0) + 1}>
                   <Text c="dimmed" ta="center" py="lg">{emptyMessage}</Text>
                 </Table.Td>
               </Table.Tr>
@@ -276,6 +291,24 @@ export default function ActionTable<T extends { id: number }>({
                       {col.render ? col.render(row) : String(row[col.key])}
                     </Table.Td>
                   ))}
+                  {actionButtons.length > 0 && (
+                    <Table.Td>
+                      <Group gap="xs">
+                        {actionButtons.map((btn, idx) => (
+                          <Button
+                            key={idx}
+                            size="xs"
+                            variant={btn.variant || 'light'}
+                            color={btn.color || 'brand-blue'}
+                            onClick={() => btn.onClick(row)}
+                            disabled={btn.disabled?.(row)}
+                          >
+                            {btn.label}
+                          </Button>
+                        ))}
+                      </Group>
+                    </Table.Td>
+                  )}
                 </Table.Tr>
               ))
             )}

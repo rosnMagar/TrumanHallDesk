@@ -14,12 +14,6 @@ export const handler = async (event) => {
     return { statusCode: 200, headers, body: '' };
   }
 
-  const bannerID = event.pathParameters?.bannerID;
-
-  if (!bannerID) {
-    return { statusCode: 400, headers, body: JSON.stringify({ error: 'bannerID is required' }) };
-  }
-
   try {
     connection = await mysql.createConnection({
       host: process.env.DB_HOST,
@@ -29,13 +23,26 @@ export const handler = async (event) => {
       database: process.env.DB_NAME
     });
 
-    const [result] = await connection.execute('DELETE FROM `user` WHERE bannerID = ?', [bannerID]);
+    const [rows] = await connection.execute(`
+      SELECT 
+        e.equipmentID,
+        e.type,
+        e.description,
+        e.checkoutTime,
+        e.currentOwner,
+        e.checkoutStaff,
+        r.residentID,
+        CONCAT(u.lastName, ', ', u.firstName) AS borrowerName,
+        u.bannerID AS borrowerBannerID,
+        u.phoneNumber AS borrowerPhone,
+        e.checkedOut
+      FROM equipment e
+      LEFT JOIN resident r ON e.currentOwner = r.residentID
+      LEFT JOIN \`user\` u ON r.residentID = u.bannerID
+      ORDER BY e.equipmentID
+    `);
 
-    if (result.affectedRows === 0) {
-      return { statusCode: 404, headers, body: JSON.stringify({ error: 'User not found' }) };
-    }
-
-    return { statusCode: 200, headers, body: JSON.stringify({ message: 'User deleted successfully' }) };
+    return { statusCode: 200, headers, body: JSON.stringify(rows) };
   } catch (error) {
     return { statusCode: 500, headers, body: JSON.stringify({ error: error.message }) };
   } finally {

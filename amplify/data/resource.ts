@@ -1,26 +1,53 @@
 import { type ClientSchema, a, defineData } from '@aws-amplify/backend';
+import { uploadAvatar } from '../function/uploadAvatar/resource';
+import { getPresignedUrl } from '../function/getPresignedUrl/resource';
+import { deleteAvatar } from '../function/deleteAvatar/resource';
 
-/*== STEP 1 ===============================================================
-The section below creates a Todo database table with a "content" field. Try
-adding a new "isDone" field as a boolean. The authorization rule below
-specifies that any unauthenticated user can "create", "read", "update", 
-and "delete" any "Todo" records.
-=========================================================================*/
 const schema = a.schema({
-  Todo: a
+  User: a
     .model({
-      content: a.string(),
+      id: a.id().required(),
+      email: a.string(),
+      name: a.string(),
+      avatarS3Key: a.string(),
     })
-    .authorization((allow) => [allow.guest()]),
+    .authorization((allow) => [allow.authenticated()]),
+
+  uploadAvatar: a
+    .mutation()
+    .arguments({
+      userId: a.string(),
+      imageContent: a.string(),
+    })
+    .returns(a.string())
+    .authorization((allow) => [allow.authenticated()])
+    .handler(a.handler.function(uploadAvatar)),
+
+  getAvatarUrl: a
+    .query()
+    .arguments({
+      userId: a.string(),
+      s3Key: a.string(),
+    })
+    .returns(a.string())
+    .authorization((allow) => [allow.authenticated()])
+    .handler(a.handler.function(getPresignedUrl)),
+
+  deleteAvatar: a
+    .mutation()
+    .arguments({
+      userId: a.string(),
+      s3Key: a.string(),
+    })
+    .returns(a.string())
+    .authorization((allow) => [allow.authenticated()])
+    .handler(a.handler.function(deleteAvatar)),
 });
 
 export type Schema = ClientSchema<typeof schema>;
 
 export const data = defineData({
   schema,
-  authorizationModes: {
-    defaultAuthorizationMode: 'identityPool',
-  },
 });
 
 /*== STEP 2 ===============================================================

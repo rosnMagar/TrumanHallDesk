@@ -18,11 +18,51 @@ interface TimeclockLog {
 }
 
 const INITIAL_LOGS: TimeclockLog[] = [
-  { id: 1, building: 'Truman', firstName: 'John', lastName: 'Smith', bannerId: '123456789', inOut: 'In', timestamp: '01/15/2024 08:00 AM', ipAddress: '192.168.1.101', computerName: 'TRUMAN-DSK-01' },
-  { id: 2, building: 'Miller', firstName: 'Jane', lastName: 'Doe', bannerId: '987654321', inOut: 'Out', timestamp: '01/15/2024 05:00 PM', ipAddress: '192.168.1.102', computerName: 'MILLER-DSK-02' },
-  { id: 3, building: 'Cross', firstName: 'Bob', lastName: 'Johnson', bannerId: '456789123', inOut: 'In', timestamp: '01/16/2024 09:15 AM', ipAddress: '192.168.1.103', computerName: 'CROSS-DSK-01' },
-  { id: 4, building: 'Blanton', firstName: 'Alice', lastName: 'Williams', bannerId: '789123456', inOut: 'In', timestamp: '01/16/2024 08:30 AM', ipAddress: '192.168.1.104', computerName: 'BLANTON-DSK-01' },
-]
+  {
+    id: 1,
+    building: "Ryle Hall",
+    firstName: "John",
+    lastName: "Smith",
+    bannerId: "123456789",
+    inOut: "In",
+    timestamp: "01/15/2024 08:00 AM",
+    ipAddress: "192.168.1.101",
+    computerName: "RYLE-DSK-01",
+  },
+  {
+    id: 2,
+    building: "Dobson Hall",
+    firstName: "Jane",
+    lastName: "Doe",
+    bannerId: "987654321",
+    inOut: "Out",
+    timestamp: "01/15/2024 05:00 PM",
+    ipAddress: "192.168.1.102",
+    computerName: "DOBSON-DSK-02",
+  },
+  {
+    id: 3,
+    building: "Missouri Hall",
+    firstName: "Bob",
+    lastName: "Johnson",
+    bannerId: "456789123",
+    inOut: "In",
+    timestamp: "01/16/2024 09:15 AM",
+    ipAddress: "192.168.1.103",
+    computerName: "MO-DSK-01",
+  },
+  {
+    id: 4,
+    building: "Blanton-Nason Brewer Hall",
+    firstName: "Alice",
+    lastName: "Williams",
+    bannerId: "789123456",
+    inOut: "In",
+    timestamp: "01/16/2024 08:30 AM",
+    ipAddress: "192.168.1.104",
+    computerName: "BNB-DSK-01",
+  },
+];
 
 const columns = [
   { key: 'id' as const, label: 'ID', sortable: true },
@@ -42,7 +82,16 @@ const filterFields = [
 ]
 
 const filterOptions: Record<string, { value: string; label: string }[]> = {
-  building: ['Truman', 'Miller', 'Cross', 'Blanton'].map(v => ({ value: v, label: v })),
+  building: [
+    "Ryle",
+    "BNB",
+    "Missouri",
+    "Centennial",
+    "Dobson",
+    "West",
+    "Campbell",
+    "Grim",
+  ].map((v) => ({ value: v, label: v })),
   inOut: [
     { value: 'In', label: 'In' },
     { value: 'Out', label: 'Out' },

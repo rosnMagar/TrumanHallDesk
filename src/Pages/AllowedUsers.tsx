@@ -14,28 +14,21 @@ interface AllowedUser {
 }
 
 const BUILDINGS = [
-  { value: 'Blanton', label: 'Blanton' },
-  { value: 'Boudreaux', label: 'Boudreaux' },
-  { value: 'Clary', label: 'Clary' },
-  { value: 'Clark', label: 'Clark' },
-  { value: 'Cross', label: 'Cross' },
-  { value: 'Dickey', label: 'Dickey' },
-  { value: 'Foster', label: 'Foster' },
-  { value: 'Hardee', label: 'Hardee' },
-  { value: 'Miller', label: 'Miller' },
-  { value: 'Rader', label: 'Rader' },
-  { value: 'South', label: 'South' },
-  { value: 'St. Gro', label: 'St. Gro' },
-  { value: 'Thomason', label: 'Thomason' },
-  { value: 'Truman', label: 'Truman' },
-  { value: 'West', label: 'West' },
-]
+  { value: "Blanton-Nason Brewer Hall", label: "Blanton-Nason Brewer Hall" },
+  { value: "Ryle Hall", label: "Ryle Hall" },
+  { value: "Campbell Apartments", label: "Campbell Apartments" },
+  { value: "West Campus Suites", label: "West Campus Suites" },
+  { value: "Missouri Hall", label: "Missouri Hall" },
+  { value: "Centennial Hall", label: "Centennial Hall" },
+  { value: "Dobson Hall", label: "Dobson Hall" },
+  { value: "Grim Hall", label: "Grim Hall" },
+];
 
 const INITIAL_USERS: AllowedUser[] = [
-  { id: 1, username: 'jsmith', building: 'Truman' },
-  { id: 2, username: 'mjones', building: 'Miller' },
-  { id: 3, username: 'rbrown', building: 'Cross' },
-]
+  { id: 1, username: "jsmith", building: "Ryle Hall" },
+  { id: 2, username: "mjones", building: "Missouri Hall" },
+  { id: 3, username: "rbrown", building: "Dobson Hall" },
+];
 
 export default function AllowedUsers() {
   const [activeTab, setActiveTab] = useState<Tab>('Timeclock')

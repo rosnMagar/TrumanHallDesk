@@ -14,13 +14,14 @@ export const handler = async (event) => {
     return { statusCode: 200, headers, body: '' };
   }
 
-  const bannerID = event.pathParameters?.bannerID;
-
-  if (!bannerID) {
-    return { statusCode: 400, headers, body: JSON.stringify({ error: 'bannerID is required' }) };
-  }
-
   try {
+    const body = JSON.parse(event.body || '{}');
+    const { type, description } = body;
+
+    if (!type) {
+      return { statusCode: 400, headers, body: JSON.stringify({ error: 'Equipment type is required' }) };
+    }
+
     connection = await mysql.createConnection({
       host: process.env.DB_HOST,
       port: parseInt(process.env.DB_PORT) || 3306,
@@ -29,13 +30,20 @@ export const handler = async (event) => {
       database: process.env.DB_NAME
     });
 
-    const [result] = await connection.execute('DELETE FROM `user` WHERE bannerID = ?', [bannerID]);
+    const [result] = await connection.execute(
+      'INSERT INTO equipment (type, description, checkedOut) VALUES (?, ?, \'N\')',
+      [type, description || null]
+    );
 
-    if (result.affectedRows === 0) {
-      return { statusCode: 404, headers, body: JSON.stringify({ error: 'User not found' }) };
-    }
-
-    return { statusCode: 200, headers, body: JSON.stringify({ message: 'User deleted successfully' }) };
+    return { 
+      statusCode: 201, 
+      headers, 
+      body: JSON.stringify({ 
+        success: true, 
+        equipmentID: result.insertId,
+        message: 'Equipment created successfully' 
+      }) 
+    };
   } catch (error) {
     return { statusCode: 500, headers, body: JSON.stringify({ error: error.message }) };
   } finally {

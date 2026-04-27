@@ -16,30 +16,41 @@ interface DatastreamUser {
 }
 
 const BUILDINGS = [
-  { value: 'All Buildings', label: 'All Buildings' },
-  { value: 'No Buildings', label: 'No Buildings' },
-  { value: 'Blanton', label: 'Blanton' },
-  { value: 'Boudreaux', label: 'Boudreaux' },
-  { value: 'Clary', label: 'Clary' },
-  { value: 'Clark', label: 'Clark' },
-  { value: 'Cross', label: 'Cross' },
-  { value: 'Dickey', label: 'Dickey' },
-  { value: 'Foster', label: 'Foster' },
-  { value: 'Hardee', label: 'Hardee' },
-  { value: 'Miller', label: 'Miller' },
-  { value: 'Rader', label: 'Rader' },
-  { value: 'South', label: 'South' },
-  { value: 'St. Gro', label: 'St. Gro' },
-  { value: 'Thomason', label: 'Thomason' },
-  { value: 'Truman', label: 'Truman' },
-  { value: 'West', label: 'West' },
-]
+  { value: "All Buildings", label: "All Buildings" },
+  { value: "No Buildings", label: "No Buildings" },
+  { value: "Blanton-Nason Brewer Hall", label: "Blanton-Nason Brewer Hall" },
+  { value: "Ryle Hall", label: "Ryle Hall" },
+  { value: "Campbell Apartments", label: "Campbell Apartments" },
+  { value: "West Campus Suites", label: "West Campus Suites" },
+  { value: "Missouri Hall", label: "Missouri Hall" },
+  { value: "Centennial Hall", label: "Centennial Hall" },
+  { value: "Dobson Hall", label: "Dobson Hall" },
+  { value: "Grim Hall", label: "Grim Hall" },
+];
 
 const INITIAL_USERS: DatastreamUser[] = [
-  { id: 1, username: 'jsmith', viewAccess: 'All Buildings', editAccess: 'All Buildings', access: '100' },
-  { id: 2, username: 'mjones', viewAccess: 'Truman', editAccess: 'No Buildings', access: '100' },
-  { id: 3, username: 'rbrown', viewAccess: 'All Buildings', editAccess: 'Truman', access: '100' },
-]
+  {
+    id: 1,
+    username: "jsmith",
+    viewAccess: "All Buildings",
+    editAccess: "All Buildings",
+    access: "100",
+  },
+  {
+    id: 2,
+    username: "mjones",
+    viewAccess: "Ryle Hall",
+    editAccess: "No Buildings",
+    access: "100",
+  },
+  {
+    id: 3,
+    username: "rbrown",
+    viewAccess: "All Buildings",
+    editAccess: "Ryle Hall",
+    access: "100",
+  },
+];
 
 export default function DatastreamUsers() {
   const [activeTab, setActiveTab] = useState<Tab>('Timeclock')
