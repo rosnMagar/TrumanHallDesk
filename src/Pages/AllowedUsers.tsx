@@ -1,10 +1,11 @@
+//Frontend wise this page is good for now
 import { useState } from 'react'
 import {
-  AppShell, Group, Button, TextInput, Paper, Title,
-  SimpleGrid, Stack, Table, Select,
+  Button, TextInput, Paper, Title,
+  SimpleGrid, Stack, Table, Select, Group,
 } from '@mantine/core'
-import SiteHeader, { type Tab } from '../Components/SiteHeader'
-import SiteFooter from '../Components/SiteFooter'
+import { type Tab } from '../Components/SiteHeader'
+import PageLayout from '../Components/PageLayout'
 
 interface AllowedUser {
   id: number
@@ -50,70 +51,62 @@ export default function AllowedUsers() {
   }
 
   return (
-    <AppShell header={{ height: 56 }} footer={{ height: 100 }} padding={0}>
-      <SiteHeader activeTab={activeTab} onTabChange={setActiveTab} isAdmin={true} adminLabel="Allowed Users" isAdminPage={true} />
+    <PageLayout activeTab={activeTab} onTabChange={setActiveTab} isAdmin={true} adminLabel="Allowed Users" isAdminPage={true}>
+      <Title order={2}>Allowed Users</Title>
 
-      <AppShell.Main bg="gray.1">
-        <Stack p="xl" maw={900} mx="auto" gap="lg">
-          <Title order={2}>Allowed Users</Title>
+      <Paper withBorder shadow="xs" radius="md" style={{ overflow: 'hidden' }}>
+        <Table withColumnBorders highlightOnHover verticalSpacing="md">
+          <Table.Thead>
+            <Table.Tr>
+              <Table.Th fw={700}>Username</Table.Th>
+              <Table.Th fw={700}>Building</Table.Th>
+              <Table.Th fw={700}>Remove</Table.Th>
+            </Table.Tr>
+          </Table.Thead>
+          <Table.Tbody>
+            {users.map(user => (
+              <Table.Tr key={user.id}>
+                <Table.Td>{user.username}</Table.Td>
+                <Table.Td>{user.building}</Table.Td>
+                <Table.Td>
+                  <Button
+                    size="xs"
+                    variant="light"
+                    color="red"
+                    onClick={() => handleRemove(user.id)}
+                  >
+                    Remove
+                  </Button>
+                </Table.Td>
+              </Table.Tr>
+            ))}
+          </Table.Tbody>
+        </Table>
+      </Paper>
 
-          <Paper withBorder radius="md" style={{ overflow: 'hidden' }}>
-            <Table withColumnBorders highlightOnHover verticalSpacing="md">
-              <Table.Thead>
-                <Table.Tr>
-                  <Table.Th fw={700}>Username</Table.Th>
-                  <Table.Th fw={700}>Building</Table.Th>
-                  <Table.Th fw={700}>Remove</Table.Th>
-                </Table.Tr>
-              </Table.Thead>
-              <Table.Tbody>
-                {users.map(user => (
-                  <Table.Tr key={user.id}>
-                    <Table.Td>{user.username}</Table.Td>
-                    <Table.Td>{user.building}</Table.Td>
-                    <Table.Td>
-                      <Button
-                        size="xs"
-                        variant="light"
-                        color="red"
-                        onClick={() => handleRemove(user.id)}
-                      >
-                        Remove
-                      </Button>
-                    </Table.Td>
-                  </Table.Tr>
-                ))}
-              </Table.Tbody>
-            </Table>
-          </Paper>
-
-          <Paper withBorder p="xl" radius="md">
-            <Title order={4} mb="md">Add New User</Title>
-            <SimpleGrid cols={3} spacing="md">
-              <TextInput
-                label="Username"
-                placeholder="Enter username"
-                value={newUsername}
-                onChange={(e) => setNewUsername(e.target.value)}
-              />
-              <Select
-                label="Building"
-                placeholder="Select building"
-                data={BUILDINGS}
-                value={newBuilding}
-                onChange={(value) => setNewBuilding(value)}
-              />
-              <Group align="flex-end">
-                <Button color="grape" onClick={handleAdd}>
-                  Add
-                </Button>
-              </Group>
-            </SimpleGrid>
-          </Paper>
-        </Stack>
-      </AppShell.Main>
-
-      <SiteFooter />
-    </AppShell>
+      <Paper withBorder shadow="xs" p="xl" radius="md">
+        <Title order={4} mb="md">Add New User</Title>
+        <SimpleGrid cols={3} spacing="md">
+          <TextInput
+            label="Username"
+            placeholder="Enter username"
+            value={newUsername}
+            onChange={(e) => setNewUsername(e.target.value)}
+          />
+          <Select
+            label="Building"
+            placeholder="Select building"
+            data={BUILDINGS}
+            value={newBuilding}
+            onChange={(value) => setNewBuilding(value)}
+          />
+          <Group align="flex-end">
+            <Button color="brand-blue" onClick={handleAdd}>
+              Add
+            </Button>
+          </Group>
+        </SimpleGrid>
+      </Paper>
+    </PageLayout>
   )
 }

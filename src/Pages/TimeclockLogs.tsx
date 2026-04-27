@@ -1,7 +1,8 @@
+//Same action table filter issue as the other pages
 import { useState } from 'react'
-import { AppShell, Stack, Title } from '@mantine/core'
-import SiteHeader, { type Tab } from '../Components/SiteHeader'
-import SiteFooter from '../Components/SiteFooter'
+import { Title } from '@mantine/core'
+import { type Tab } from '../Components/SiteHeader'
+import PageLayout from '../Components/PageLayout'
 import DataTable from '../Components/DataTable'
 
 interface TimeclockLog {
@@ -82,13 +83,13 @@ const filterFields = [
 
 const filterOptions: Record<string, { value: string; label: string }[]> = {
   building: [
-    "Ryle",
-    "BNB",
-    "Missouri",
-    "Centennial",
-    "Dobson",
-    "West",
-    "Campbell",
+    "Ryle Hall",
+    "Blanton-Nason Brewer Hall",
+    "Missouri Hall",
+    "Centennial Hall",
+    "Dobson Hall",
+    "West Hall",
+    "Campbell Hall",
     "Grim",
   ].map((v) => ({ value: v, label: v })),
   inOut: [
@@ -102,24 +103,16 @@ export default function TimeclockLogs() {
   const [logs] = useState<TimeclockLog[]>(INITIAL_LOGS)
 
   return (
-    <AppShell header={{ height: 56 }} footer={{ height: 100 }} padding={0}>
-      <SiteHeader activeTab={activeTab} onTabChange={setActiveTab} isAdmin={true} adminLabel="Timeclock" isAdminPage={true} />
+    <PageLayout activeTab={activeTab} onTabChange={setActiveTab} isAdmin={true} adminLabel="Timeclock" isAdminPage={true}>
+      <Title order={2}>Timeclock</Title>
 
-      <AppShell.Main bg="gray.1">
-        <Stack p="xl" maw={1200} mx="auto" gap="lg">
-          <Title order={2}>Timeclock</Title>
-
-          <DataTable
-            data={logs}
-            columns={columns}
-            searchableFields={['building', 'firstName', 'lastName', 'bannerId']}
-            filterFields={filterFields}
-            filterOptions={filterOptions}
-          />
-        </Stack>
-      </AppShell.Main>
-
-      <SiteFooter />
-    </AppShell>
+      <DataTable
+        data={logs}
+        columns={columns}
+        searchableFields={['building', 'firstName', 'lastName', 'bannerId']}
+        filterFields={filterFields}
+        filterOptions={filterOptions}
+      />
+    </PageLayout>
   )
 }

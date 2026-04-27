@@ -14,6 +14,7 @@ import TimeclockLogs from './Pages/TimeclockLogs'
 import PictureLookup from './Pages/PictureLookup'
 import UserInfoUpload from './Pages/UserInfoUpload'
 import ProvisionWorker from './Pages/ProvisionWorker'
+import ForwardPackage from './Pages/FowardPackage'
 import { Authenticator } from '@aws-amplify/ui-react'
 import '@aws-amplify/ui-react/styles.css'
 
@@ -38,6 +39,7 @@ function App() {
             <Route path="/admin/timeclock-logs" element={<TimeclockLogs />} />
             <Route path="/admin/user-info-upload" element={<UserInfoUpload />} />
             <Route path="/admin/provision-worker" element={<ProvisionWorker />} />
+            <Route path="/forward-package" element={<ForwardPackage />} />
           </Routes>
         </BrowserRouter>
       )}

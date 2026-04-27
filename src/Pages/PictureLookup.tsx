@@ -1,23 +1,25 @@
+//Looks good for now frontend wise
 import { useState } from 'react'
 import {
   Paper, Title, TextInput, Button, Group, Stack, Text, Card, Image, Center,
 } from '@mantine/core'
 import { IconSearch } from '@tabler/icons-react'
+import { type Tab } from '../Components/SiteHeader'
 import PageLayout from '../Components/PageLayout'
 import { useRestApi } from '../hooks/useRestApi'
 
 export default function PictureLookup() {
+  const [activeTab, setActiveTab] = useState<Tab>('Picture Lookup')
   const [searchQuery, setSearchQuery] = useState('')
   const [hasSearched, setHasSearched] = useState(false)
 
   const { data: user, loading, error, execute: fetchUser } = useRestApi<any>({
     url: import.meta.env.VITE_API_URL,
-    method: 'GET'
+    method: 'GET',
   })
 
   const handleSearch = async () => {
     if (!searchQuery.trim()) return
-    
     try {
       await fetchUser(undefined, undefined, `/users/${searchQuery.trim()}`)
       setHasSearched(true)
@@ -26,8 +28,11 @@ export default function PictureLookup() {
     }
   }
 
+  const showResults = hasSearched && user && !error
+  const showError = !!error
+
   return (
-    <PageLayout activeTab="Picture Lookup">
+    <PageLayout activeTab={activeTab} onTabChange={setActiveTab}>
       <Paper withBorder shadow="xs" p="xl" radius="md">
         <Title order={4} mb="lg">Picture Lookup</Title>
         <Stack gap="md">
@@ -43,9 +48,9 @@ export default function PictureLookup() {
               style={{ flex: 1 }}
               onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
             />
-            <Button 
-              color="brand-purple" 
-              onClick={handleSearch} 
+            <Button
+              color="brand-blue"
+              onClick={handleSearch}
               leftSection={<IconSearch size={16} />}
               loading={loading}
             >
@@ -55,37 +60,46 @@ export default function PictureLookup() {
         </Stack>
       </Paper>
 
-      {error && (
-        <Card withBorder shadow="sm" radius="md" p="xl" mt="md">
-          <Center>
-            <Text c="red">Error: {error}</Text>
-          </Center>
-        </Card>
-      )}
+      <Card
+        withBorder
+        shadow="xs"
+        radius="md"
+        p="xl"
+        style={{ visibility: showError ? 'visible' : 'hidden' }}
+      >
+        <Center>
+          <Text c="red">Error: {error}</Text>
+        </Center>
+      </Card>
 
-      {hasSearched && user && !error && (
-        <Card withBorder shadow="sm" radius="md" p="xl" mt="md">
-          <Stack align="center" gap="md">
-            <Text fw={600} size="lg">Search Results for "{searchQuery}"</Text>
-            {/* Use idPicture from the SQL schema */}
-            <Image
-              src={user.idPicture || "https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png"}
-              w={200}
-              h={200}
-              radius="md"
-              alt="Student Picture"
-              fallbackSrc="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png"
-            />
-            <Stack gap={4} align="center">
-              <Text fw={700} size="xl">{user.firstName} {user.lastName}</Text>
-              <Text size="sm" c="dimmed">Student ID: {user.bannerID}</Text>
-              {user.email && <Text size="sm" c="dimmed">Email: {user.email}</Text>}
-              {user.phoneNumber && <Text size="sm" c="dimmed">Phone: {user.phoneNumber}</Text>}
-              {user.homeAddress && <Text size="sm" c="dimmed">Address: {user.homeAddress}</Text>}
-            </Stack>
+      <Card
+        withBorder
+        shadow="xs"
+        radius="md"
+        p="xl"
+        style={{ visibility: showResults ? 'visible' : 'hidden' }}
+      >
+        <Stack align="center" gap="md">
+          <Text fw={600} size="lg">
+            {showResults ? `Search Results for "${searchQuery}"` : '\u00a0'}
+          </Text>
+          <Image
+            src={user?.idPicture || 'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png'}
+            w={200}
+            h={200}
+            radius="md"
+            alt="Student Picture"
+            fallbackSrc="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png"
+          />
+          <Stack gap={4} align="center">
+            <Text fw={700} size="xl">{user?.firstName} {user?.lastName}</Text>
+            <Text size="sm" c="dimmed">Student ID: {user?.bannerID}</Text>
+            <Text size="sm" c="dimmed">{user?.email ? `Email: ${user.email}` : '\u00a0'}</Text>
+            <Text size="sm" c="dimmed">{user?.phoneNumber ? `Phone: ${user.phoneNumber}` : '\u00a0'}</Text>
+            <Text size="sm" c="dimmed">{user?.homeAddress ? `Address: ${user.homeAddress}` : '\u00a0'}</Text>
           </Stack>
-        </Card>
-      )}
+        </Stack>
+      </Card>
     </PageLayout>
   )
 }

@@ -13,23 +13,19 @@ import type { User } from '../api/types'
 
 export default function ResidentLockout() {
   const [activeTab, setActiveTab] = useState<Tab>('Lock-out')
-  
-  // State
+
   const [searchBannerId, setSearchBannerId] = useState('')
   const [currentUser, setCurrentUser] = useState<User | null>(null)
   const [deskAttendantId, setDeskAttendantId] = useState<string>('')
-  
-  // New Fields
+
   const [phoneNumber, setPhoneNumber] = useState('')
   const [keyNumber, setKeyNumber] = useState('')
-  
-  // API Hooks
+
   const { execute: fetchUser, loading: isLoadingUser, error: searchError, reset: resetUser } = useLambda(getUser)
   const { execute: submitLockout, loading: isSubmitting, error: submitError, reset: resetSubmit } = useLambda(createLockout)
   const [successMsg, setSuccessMsg] = useState('')
 
   useEffect(() => {
-    // Get the current logged-in user's Banner ID (assuming username = bannerID)
     fetchAuthSession().then(session => {
       const username = session.tokens?.accessToken?.payload?.username as string
       if (username) {
@@ -54,7 +50,7 @@ export default function ResidentLockout() {
 
   const handleSubmit = async () => {
     if (!currentUser || !keyNumber.trim()) return
-    
+
     setSuccessMsg('')
     try {
       await submitLockout({
@@ -64,7 +60,6 @@ export default function ResidentLockout() {
         phoneNumber: phoneNumber.trim() || undefined
       })
       setSuccessMsg('Lockout equipment entry created successfully!')
-      // Clear form
       setCurrentUser(null)
       setSearchBannerId('')
       setPhoneNumber('')
@@ -80,8 +75,7 @@ export default function ResidentLockout() {
         <Title order={4} mb="lg">Resident Lockout</Title>
         <SimpleGrid cols={{ base: 1, md: 2 }} spacing="xl">
           <Stack gap="md">
-            
-            {/* Search Section */}
+
             <Paper withBorder p="md" radius="md">
               <Text fw={500} mb="sm">Find Resident</Text>
               <Group align="flex-end">
@@ -93,11 +87,11 @@ export default function ResidentLockout() {
                   onChange={(e) => setSearchBannerId(e.currentTarget.value)}
                   style={{ flex: 1 }}
                 />
-                <Button 
-                  onClick={handleSearch} 
+                <Button
+                  onClick={handleSearch}
                   loading={isLoadingUser}
                   leftSection={<IconSearch size={16} />}
-                  color="brand-purple"
+                  color="brand-blue"
                 >
                   Lookup
                 </Button>
@@ -107,7 +101,6 @@ export default function ResidentLockout() {
               )}
             </Paper>
 
-            {/* User Details & Lockout Form */}
             {currentUser && (
               <Paper withBorder p="md" radius="md" bg="gray.0">
                 <Group align="flex-start" wrap="nowrap">
@@ -126,7 +119,7 @@ export default function ResidentLockout() {
                     <Text size="sm" c="dimmed">{currentUser.homeAddress}</Text>
                   </Stack>
                 </Group>
-                
+
                 <Stack mt="md" gap="md">
                   <TextInput
                     label="Phone Number"
@@ -144,13 +137,13 @@ export default function ResidentLockout() {
                     required
                   />
                 </Stack>
-                
+
                 {submitError && <Text c="red" size="sm" mt="sm">{submitError}</Text>}
                 {successMsg && <Text c="teal" size="sm" mt="sm" fw={500}>{successMsg}</Text>}
-                
+
                 <Group justify="flex-end" mt="xl">
-                  <Button 
-                    color="brand-blue" 
+                  <Button
+                    color="brand-blue"
                     onClick={handleSubmit}
                     loading={isSubmitting}
                     disabled={!keyNumber.trim()}
@@ -164,7 +157,6 @@ export default function ResidentLockout() {
 
           </Stack>
 
-          {/* Instructions */}
           <Paper withBorder p="md" radius="md" bg="gray.0" h="fit-content">
             <Text fw={600} size="sm" mb="sm">Desk Attendant Instructions</Text>
             <List size="sm" c="dimmed" spacing={8}>

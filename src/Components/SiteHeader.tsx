@@ -1,13 +1,12 @@
 import { useState } from 'react'
-import { signOut } from 'aws-amplify/auth'
 import { Group, Button, Text, Box, Modal, Stack, UnstyledButton, Menu } from '@mantine/core'
 import { AppShell } from '@mantine/core'
 import { IconDeviceDesktop, IconSettings, IconLogout } from '@tabler/icons-react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthenticator } from '@aws-amplify/ui-react'
 
-export type Tab = 'Inbound' | 'Outbound' | 'Lock-out' | 'Equipment' | 'Timeclock' | 'Picture Lookup'
-export const TABS: Tab[] = ['Inbound', 'Outbound', 'Lock-out', 'Equipment', 'Timeclock', 'Picture Lookup']
+export type Tab = 'Inbound' | 'Outbound' | 'Forward' | 'Lock-out' | 'Equipment' | 'Timeclock' | 'Picture Lookup'
+export const TABS: Tab[] = ['Inbound', 'Outbound', 'Forward', 'Lock-out', 'Equipment', 'Timeclock', 'Picture Lookup']
 
 export type AdminPage = 'allowed-users' | 'datastream-users' | 'maintain-student' | 'activity-cards' | 'activity-items' | 'timeclock-admin' | 'user-info-upload' | 'provision-worker'
 
@@ -28,6 +27,7 @@ export default function SiteHeader({ activeTab, onTabChange, isAdmin = true, isA
     onTabChange?.(tab)
     if (tab === 'Inbound') navigate('/')
     if (tab === 'Outbound') navigate('/outbound')
+    if (tab === 'Forward') navigate('/forward-package')
     if (tab === 'Equipment') navigate('/equipment')
     if (tab === 'Lock-out') navigate('/lockout')
     if (tab === 'Timeclock') navigate('/timeclock')

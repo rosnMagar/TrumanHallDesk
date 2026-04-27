@@ -10,7 +10,7 @@ import { getUser, createEquipment } from '../api/client'
 import { IconCheck, IconAlertCircle, IconPlus, IconList } from '@tabler/icons-react'
 import { useNavigate } from 'react-router-dom'
 import PageLayout from '../Components/PageLayout'
-import type { Tab } from '../Components/ActionTable'
+import { type Tab } from '../Components/SiteHeader'
 
 interface CheckoutForm {
   bannerId: string
@@ -34,7 +34,7 @@ export default function EquipmentCheckOut() {
 
   const { available, refetch } = useEquipment()
   const { checkout, loading: checkoutLoading } = useCheckout()
-  const [user, setUser] = useState<{bannerID: string; firstName: string; lastName: string; phoneNumber?: string; idPicture?: string} | null>(null)
+  const [user, setUser] = useState<{ bannerID: string; firstName: string; lastName: string; phoneNumber?: string; idPicture?: string } | null>(null)
   const [searchLoading, setSearchLoading] = useState(false)
 
   const { form, setForm, setField } = useFormFields<CheckoutForm>({
@@ -119,10 +119,11 @@ export default function EquipmentCheckOut() {
 
   return (
     <PageLayout activeTab={activeTab} onTabChange={setActiveTab}>
-      <Group justify="space-between" mb="lg">
+      <Group justify="space-between">
         <Title order={2}>Equipment Management</Title>
-        <Button 
-          variant="light" 
+        <Button
+          color="brand-blue"
+          variant="light"
           leftSection={<IconList size={18} />}
           onClick={() => navigate('/equipment/inventory')}
         >
@@ -131,12 +132,11 @@ export default function EquipmentCheckOut() {
       </Group>
 
       {(error || success) && (
-        <Alert 
+        <Alert
           icon={error ? <IconAlertCircle size={16} /> : <IconCheck size={16} />}
-          color={error ? 'red' : 'green'} 
-          mb="md"
+          color={error ? 'red' : 'green'}
           withCloseButton
-          onClose={() => { setError(null); setSuccess(null); }}
+          onClose={() => { setError(null); setSuccess(null) }}
         >
           {error || success}
         </Alert>
@@ -156,7 +156,7 @@ export default function EquipmentCheckOut() {
                 style={{ flex: 1 }}
                 onKeyDown={(e) => e.key === 'Enter' && handleBannerSearch()}
               />
-              <Button onClick={handleBannerSearch} loading={searchLoading}>Search</Button>
+              <Button color="brand-blue" onClick={handleBannerSearch} loading={searchLoading}>Search</Button>
             </Group>
           </Stack>
         </Paper>
@@ -173,12 +173,12 @@ export default function EquipmentCheckOut() {
             <Group align="flex-start" gap="xl" wrap="nowrap">
               <Box style={{ flex: '0 0 30%' }}>
                 <Paper withBorder p={4} radius="md" shadow="xs">
-                  <Image 
-                    src={user?.idPicture || "https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png"} 
-                    w="100%" 
+                  <Image
+                    src={user?.idPicture || "https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png"}
+                    w="100%"
                     h={200}
                     fit="cover"
-                    radius="sm" 
+                    radius="sm"
                     alt="Resident ID"
                     fallbackSrc="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png"
                   />
@@ -188,7 +188,6 @@ export default function EquipmentCheckOut() {
               <Stack gap="sm" style={{ flex: 1 }}>
                 <Title order={3} mb={0}>{user?.firstName} {user?.lastName}</Title>
                 <Divider w={100} />
-                
                 <Stack gap={4}>
                   <Group gap="xs">
                     <Text fw={700} size="sm" w={80}>Banner ID:</Text>
@@ -201,11 +200,8 @@ export default function EquipmentCheckOut() {
                     </Group>
                   )}
                 </Stack>
-                
                 <Alert color="blue" variant="light" py="xs" mt="md">
-                  <Text size="xs">
-                    Verified student record. Eligible to borrow equipment.
-                  </Text>
+                  <Text size="xs">Verified student record. Eligible to borrow equipment.</Text>
                 </Alert>
               </Stack>
             </Group>
@@ -215,16 +211,15 @@ export default function EquipmentCheckOut() {
             <Stack gap="xs">
               <Group justify="space-between">
                 <Text size="sm" fw={600}>Items to Borrow</Text>
-                <Button 
-                  variant="subtle" 
-                  size="xs" 
+                <Button
+                  variant="subtle"
+                  size="xs"
                   leftSection={<IconPlus size={14} />}
                   onClick={() => setAddModalOpen(true)}
                 >
                   Add New Item
                 </Button>
               </Group>
-              
               <SimpleGrid cols={3} spacing="md">
                 <Select
                   placeholder="Item 1 (Required)"
@@ -255,7 +250,7 @@ export default function EquipmentCheckOut() {
 
             <Group justify="flex-end">
               <Button variant="default" onClick={() => setShowForm(false)}>Cancel</Button>
-              <Button onClick={handleCheckout} loading={checkoutLoading}>
+              <Button color="brand-blue" onClick={handleCheckout} loading={checkoutLoading}>
                 Complete Borrow
               </Button>
             </Group>
@@ -263,27 +258,27 @@ export default function EquipmentCheckOut() {
         </Paper>
       )}
 
-      <Modal 
-        opened={addModalOpen} 
-        onClose={() => setAddModalOpen(false)} 
+      <Modal
+        opened={addModalOpen}
+        onClose={() => setAddModalOpen(false)}
         title="Add New Equipment to Inventory"
         centered
       >
         <Stack gap="md">
-          <TextInput 
-            label="Equipment Type" 
-            placeholder="e.g. Vacuum, Key, Basketball" 
+          <TextInput
+            label="Equipment Type"
+            placeholder="e.g. Vacuum, Key, Basketball"
             required
             value={newEqType}
             onChange={(e) => setNewEqType(e.currentTarget.value)}
           />
-          <TextInput 
-            label="Description/ID" 
-            placeholder="e.g. Room 101, Serial #123" 
+          <TextInput
+            label="Description/ID"
+            placeholder="e.g. Room 101, Serial #123"
             value={newEqDesc}
             onChange={(e) => setNewEqDesc(e.currentTarget.value)}
           />
-          <Button fullWidth onClick={handleAddEquipment} loading={isAdding}>
+          <Button color="brand-blue" fullWidth onClick={handleAddEquipment} loading={isAdding}>
             Add to Inventory
           </Button>
         </Stack>

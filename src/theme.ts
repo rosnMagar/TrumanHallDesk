@@ -17,5 +17,10 @@ export const theme: MantineThemeOverride = createTheme({
         color: 'brand-purple',
       },
     },
+    Modal: {
+      defaultProps: {
+        lockScroll: false,
+      },
+    },
   },
 })

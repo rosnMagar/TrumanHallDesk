@@ -1,10 +1,11 @@
+//Frontend wise this page is good for now
 import { useState } from 'react'
 import {
-  AppShell, Group, Button, TextInput, Paper, Title,
-  SimpleGrid, Stack, Table, Select,
+  Button, TextInput, Paper, Title,
+  SimpleGrid, Stack, Table, Select, Group,
 } from '@mantine/core'
-import SiteHeader, { type Tab } from '../Components/SiteHeader'
-import SiteFooter from '../Components/SiteFooter'
+import { type Tab } from '../Components/SiteHeader'
+import PageLayout from '../Components/PageLayout'
 
 interface DatastreamUser {
   id: number
@@ -76,87 +77,79 @@ export default function DatastreamUsers() {
   }
 
   return (
-    <AppShell header={{ height: 56 }} footer={{ height: 100 }} padding={0}>
-      <SiteHeader activeTab={activeTab} onTabChange={setActiveTab} isAdmin={true} adminLabel="Datastream Users" isAdminPage={true} />
+    <PageLayout activeTab={activeTab} onTabChange={setActiveTab} isAdmin={true} adminLabel="Datastream Users" isAdminPage={true}>
+      <Title order={2}>Datastream Users</Title>
 
-      <AppShell.Main bg="gray.1">
-        <Stack p="xl" maw={900} mx="auto" gap="lg">
-          <Title order={2}>Datastream Users</Title>
+      <Paper withBorder shadow="xs" radius="md" style={{ overflow: 'hidden' }}>
+        <Table withColumnBorders highlightOnHover verticalSpacing="md">
+          <Table.Thead>
+            <Table.Tr>
+              <Table.Th fw={700}>Username</Table.Th>
+              <Table.Th fw={700}>View Access</Table.Th>
+              <Table.Th fw={700}>Edit Access</Table.Th>
+              <Table.Th fw={700}>Access</Table.Th>
+              <Table.Th fw={700}>Remove</Table.Th>
+            </Table.Tr>
+          </Table.Thead>
+          <Table.Tbody>
+            {users.map(user => (
+              <Table.Tr key={user.id}>
+                <Table.Td>{user.username}</Table.Td>
+                <Table.Td>{user.viewAccess}</Table.Td>
+                <Table.Td>{user.editAccess}</Table.Td>
+                <Table.Td>{user.access}</Table.Td>
+                <Table.Td>
+                  <Button
+                    size="xs"
+                    variant="light"
+                    color="red"
+                    onClick={() => handleRemove(user.id)}
+                  >
+                    Remove
+                  </Button>
+                </Table.Td>
+              </Table.Tr>
+            ))}
+          </Table.Tbody>
+        </Table>
+      </Paper>
 
-          <Paper withBorder radius="md" style={{ overflow: 'hidden' }}>
-            <Table withColumnBorders highlightOnHover verticalSpacing="md">
-              <Table.Thead>
-                <Table.Tr>
-                  <Table.Th fw={700}>Username</Table.Th>
-                  <Table.Th fw={700}>View Access</Table.Th>
-                  <Table.Th fw={700}>Edit Access</Table.Th>
-                  <Table.Th fw={700}>Access</Table.Th>
-                  <Table.Th fw={700}>Remove</Table.Th>
-                </Table.Tr>
-              </Table.Thead>
-              <Table.Tbody>
-                {users.map(user => (
-                  <Table.Tr key={user.id}>
-                    <Table.Td>{user.username}</Table.Td>
-                    <Table.Td>{user.viewAccess}</Table.Td>
-                    <Table.Td>{user.editAccess}</Table.Td>
-                    <Table.Td>{user.access}</Table.Td>
-                    <Table.Td>
-                      <Button
-                        size="xs"
-                        variant="light"
-                        color="red"
-                        onClick={() => handleRemove(user.id)}
-                      >
-                        Remove
-                      </Button>
-                    </Table.Td>
-                  </Table.Tr>
-                ))}
-              </Table.Tbody>
-            </Table>
-          </Paper>
-
-          <Paper withBorder p="xl" radius="md">
-            <Title order={4} mb="md">Add New User</Title>
-            <SimpleGrid cols={5} spacing="md">
-              <TextInput
-                label="Username"
-                placeholder="Enter username"
-                value={newUsername}
-                onChange={(e) => setNewUsername(e.target.value)}
-              />
-              <Select
-                label="View Access"
-                placeholder="Select"
-                data={BUILDINGS}
-                value={newViewAccess}
-                onChange={(value) => setNewViewAccess(value)}
-              />
-              <Select
-                label="Edit Access"
-                placeholder="Select"
-                data={BUILDINGS}
-                value={newEditAccess}
-                onChange={(value) => setNewEditAccess(value)}
-              />
-              <TextInput
-                label="Access"
-                placeholder="Access level"
-                value={newAccess}
-                onChange={(e) => setNewAccess(e.target.value)}
-              />
-              <Group align="flex-end">
-                <Button color="grape" onClick={handleAdd}>
-                  Add
-                </Button>
-              </Group>
-            </SimpleGrid>
-          </Paper>
-        </Stack>
-      </AppShell.Main>
-
-      <SiteFooter />
-    </AppShell>
+      <Paper withBorder shadow="xs" p="xl" radius="md">
+        <Title order={4} mb="md">Add New User</Title>
+        <SimpleGrid cols={5} spacing="md">
+          <TextInput
+            label="Username"
+            placeholder="Enter username"
+            value={newUsername}
+            onChange={(e) => setNewUsername(e.target.value)}
+          />
+          <Select
+            label="View Access"
+            placeholder="Select"
+            data={BUILDINGS}
+            value={newViewAccess}
+            onChange={(value) => setNewViewAccess(value)}
+          />
+          <Select
+            label="Edit Access"
+            placeholder="Select"
+            data={BUILDINGS}
+            value={newEditAccess}
+            onChange={(value) => setNewEditAccess(value)}
+          />
+          <TextInput
+            label="Access"
+            placeholder="Access level"
+            value={newAccess}
+            onChange={(e) => setNewAccess(e.target.value)}
+          />
+          <Group align="flex-end">
+            <Button color="brand-blue" onClick={handleAdd}>
+              Add
+            </Button>
+          </Group>
+        </SimpleGrid>
+      </Paper>
+    </PageLayout>
   )
 }
