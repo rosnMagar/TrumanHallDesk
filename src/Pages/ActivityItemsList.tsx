@@ -21,13 +21,13 @@ interface ActivityItem {
 }
 
 const INITIAL_ITEMS: ActivityItem[] = [
-  { id: 1, room: 'Truman 101', name: 'John Smith', phone: '555-1234', bannerId: '123456789', itemDescription: 'Board Games', checkoutDate: '01/15/2024', checkoutStaff: 'JDoe', checkinDate: '01/16/2024', checkinStaff: 'JDoe' },
-  { id: 2, room: 'Miller 205', name: 'Jane Doe', phone: '555-5678', bannerId: '987654321', itemDescription: 'Projector', checkoutDate: '01/17/2024', checkoutStaff: 'ASmith', checkinDate: '', checkinStaff: '' },
-  { id: 3, room: 'Cross 302', name: 'Bob Johnson', phone: '555-9012', bannerId: '456789123', itemDescription: 'Sports Equipment', checkoutDate: '01/18/2024', checkoutStaff: 'JDoe', checkinDate: '', checkinStaff: '' },
-  { id: 4, room: 'Cross 302', name: 'Bob Johnson', phone: '555-9012', bannerId: '456789123', itemDescription: 'Sports Equipment', checkoutDate: '01/18/2024', checkoutStaff: 'JDoe', checkinDate: '', checkinStaff: '' },
-  { id: 5, room: 'Cross 302', name: 'Bob Johnson', phone: '555-9012', bannerId: '456789123', itemDescription: 'Sports Equipment', checkoutDate: '01/18/2024', checkoutStaff: 'JDoe', checkinDate: '', checkinStaff: '' },
-  { id: 6, room: 'Cross 302', name: 'Bob Johnson', phone: '555-9012', bannerId: '456789123', itemDescription: 'Sports Equipment', checkoutDate: '01/18/2024', checkoutStaff: 'JDoe', checkinDate: '', checkinStaff: '' },
-  { id: 7, room: 'Cross 302', name: 'Bob Johnson', phone: '555-9012', bannerId: '456789123', itemDescription: 'Sports Equipment', checkoutDate: '01/18/2024', checkoutStaff: 'JDoe', checkinDate: '', checkinStaff: '' },
+  { id: 1, room: 'Ryle 101', name: 'John Smith', phone: '555-1234', bannerId: '123456789', itemDescription: 'Board Games', checkoutDate: '01/15/2024', checkoutStaff: 'JDoe', checkinDate: '01/16/2024', checkinStaff: 'JDoe' },
+  { id: 2, room: 'BNB 205', name: 'Jane Doe', phone: '555-5678', bannerId: '987654321', itemDescription: 'Projector', checkoutDate: '01/17/2024', checkoutStaff: 'ASmith', checkinDate: '', checkinStaff: '' },
+  { id: 3, room: 'West 302', name: 'Bob Johnson', phone: '555-9012', bannerId: '456789123', itemDescription: 'Sports Equipment', checkoutDate: '01/18/2024', checkoutStaff: 'JDoe', checkinDate: '', checkinStaff: '' },
+  { id: 4, room: 'West 302', name: 'Bob Johnson', phone: '555-9012', bannerId: '456789123', itemDescription: 'Sports Equipment', checkoutDate: '01/18/2024', checkoutStaff: 'JDoe', checkinDate: '', checkinStaff: '' },
+  { id: 5, room: 'West 302', name: 'Bob Johnson', phone: '555-9012', bannerId: '456789123', itemDescription: 'Sports Equipment', checkoutDate: '01/18/2024', checkoutStaff: 'JDoe', checkinDate: '', checkinStaff: '' },
+  { id: 6, room: 'West 302', name: 'Bob Johnson', phone: '555-9012', bannerId: '456789123', itemDescription: 'Sports Equipment', checkoutDate: '01/18/2024', checkoutStaff: 'JDoe', checkinDate: '', checkinStaff: '' },
+  { id: 7, room: 'West 302', name: 'Bob Johnson', phone: '555-9012', bannerId: '456789123', itemDescription: 'Sports Equipment', checkoutDate: '01/18/2024', checkoutStaff: 'JDoe', checkinDate: '', checkinStaff: '' },
 ]
 
 const columns = [
