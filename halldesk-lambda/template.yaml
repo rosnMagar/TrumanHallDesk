@@ -313,6 +313,69 @@ Resources:
       Policies:
         - AWSLambdaBasicExecutionRole
 
+  RecordPunchFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: RecordPunch
+      Handler: recordPunch.handler
+      CodeUri: timeclock/
+      Runtime: nodejs20.x
+      Timeout: 30
+      MemorySize: 128
+      Layers:
+        - Ref: MySQLLayerArn
+      Environment:
+        Variables:
+          DB_HOST: !Ref DBHost
+          DB_PORT: !Ref DBPort
+          DB_USER: !Ref DBUser
+          DB_PASSWORD: !Ref DBPassword
+          DB_NAME: !Ref DBName
+      Policies:
+        - AWSLambdaBasicExecutionRole
+
+  GetPunchesFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: GetPunches
+      Handler: getPunches.handler
+      CodeUri: timeclock/
+      Runtime: nodejs20.x
+      Timeout: 30
+      MemorySize: 128
+      Layers:
+        - Ref: MySQLLayerArn
+      Environment:
+        Variables:
+          DB_HOST: !Ref DBHost
+          DB_PORT: !Ref DBPort
+          DB_USER: !Ref DBUser
+          DB_PASSWORD: !Ref DBPassword
+          DB_NAME: !Ref DBName
+      Policies:
+        - AWSLambdaBasicExecutionRole
+
+  GetAllPunchesFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: GetAllPunches
+      Handler: getAllPunches.handler
+      CodeUri: timeclock/
+      Runtime: nodejs20.x
+      Timeout: 30
+      MemorySize: 128
+      Layers:
+        - Ref: MySQLLayerArn
+      Environment:
+        Variables:
+          DB_HOST: !Ref DBHost
+          DB_PORT: !Ref DBPort
+          DB_USER: !Ref DBUser
+          DB_PASSWORD: !Ref DBPassword
+          DB_NAME: !Ref DBName
+      Policies:
+        - AWSLambdaBasicExecutionRole
+
   ApiGatewayApi:
     Type: AWS::Serverless::Api
     Properties:
@@ -456,19 +519,51 @@ Resources:
                 httpMethod: POST
                 type: aws_proxy
               responses: {}
-          /lockouts:
+/lockouts:
             options:
               x-amazon-apigateway-integration:
                 uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CreateLockoutFunction.Arn}/invocations"
                 httpMethod: POST
                 type: aws_proxy
-              responses: {}
+                responses: {}
             post:
               x-amazon-apigateway-integration:
                 uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CreateLockoutFunction.Arn}/invocations"
                 httpMethod: POST
                 type: aws_proxy
-              responses: {}
+                responses: {}
+          /timeclock:
+            options:
+              x-amazon-apigateway-integration:
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RecordPunchFunction.Arn}/invocations"
+                httpMethod: POST
+                type: aws_proxy
+                responses: {}
+            get:
+              x-amazon-apigateway-integration:
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetPunchesFunction.Arn}/invocations"
+                httpMethod: POST
+                type: aws_proxy
+                responses: {}
+            post:
+              x-amazon-apigateway-integration:
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RecordPunchFunction.Arn}/invocations"
+                httpMethod: POST
+                type: aws_proxy
+                responses: {}
+          /timeclock/all:
+            options:
+              x-amazon-apigateway-integration:
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetAllPunchesFunction.Arn}/invocations"
+                httpMethod: POST
+                type: aws_proxy
+                responses: {}
+            get:
+              x-amazon-apigateway-integration:
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetAllPunchesFunction.Arn}/invocations"
+                httpMethod: POST
+                type: aws_proxy
+                responses: {}
 
   # --- Lambda Permissions for API Gateway ---
   GetAllUsersPermission:
@@ -572,6 +667,30 @@ Resources:
     Properties:
       Action: lambda:InvokeFunction
       FunctionName: !Ref CreateEquipmentFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGatewayApi}/*/*/*"
+
+  RecordPunchPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref RecordPunchFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGatewayApi}/*/*/*"
+
+  GetPunchesPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref GetPunchesFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGatewayApi}/*/*/*"
+
+  GetAllPunchesPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref GetAllPunchesFunction
       Principal: apigateway.amazonaws.com
       SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGatewayApi}/*/*/*"
 

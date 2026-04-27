@@ -18,6 +18,7 @@ const URL = {
   packages: (baseUrl ? `${baseUrl}/packages` : import.meta.env.VITE_PACKAGES_API_URL) as string,
   lockouts: (baseUrl ? `${baseUrl}/lockouts` : '') as string,
   admin: (baseUrl ? `${baseUrl}/admin` : '') as string,
+  timeclock: (baseUrl ? `${baseUrl}/timeclock` : import.meta.env.VITE_TIMECLOCK_API_URL) as string,
 };
 
 // ── Auth header ───────────────────────────────────────────────────────────────
@@ -168,4 +169,14 @@ interface CreateLockoutPayload {
   phoneNumber?: string;
 }
 export const createLockout = (data: CreateLockoutPayload) => apiFetch<{ message: string, equipmentID: number }>(URL.lockouts, '', 'POST', data);
+
+// ── Timeclock ────────────────────────────────────────────────────────────
+export const recordPunch = (action: 'in' | 'out') =>
+  apiFetch<{ id: string; bannerId: string; action: 'in' | 'out'; at: string }>(URL.timeclock, '', 'POST', { action })
+
+export const getPunches = (date?: string) =>
+  apiFetch<{ id: string; bannerId: string; action: 'in' | 'out'; at: string }[]>(URL.timeclock, toQuery({ date }))
+
+export const getAllPunches = (date?: string) =>
+  apiFetch<{ id: string; bannerId: string; action: 'in' | 'out'; at: string; firstName: string; lastName: string; building: string }[]>(URL.timeclock, '/all' + toQuery({ date }))
 

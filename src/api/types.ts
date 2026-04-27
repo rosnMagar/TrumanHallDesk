@@ -73,3 +73,10 @@ export interface Package {
   type?: string;
   requiresForwarding?: boolean;
 }
+
+export interface TimeclockPunch {
+  id: string;
+  bannerId: string;
+  action: 'in' | 'out';
+  at: string;
+}
