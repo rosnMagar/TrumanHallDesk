@@ -7,13 +7,14 @@ interface PageLayoutProps {
   onTabChange?: (tab: Tab) => void
   isAdmin?: boolean
   isAdminPage?: boolean
+  adminLabel?: string
   children: React.ReactNode
 }
 
-export default function PageLayout({ activeTab, onTabChange, isAdmin, isAdminPage = false, children }: PageLayoutProps) {
+export default function PageLayout({ activeTab, onTabChange, isAdmin, isAdminPage = false, adminLabel, children }: PageLayoutProps) {
   return (
     <AppShell header={{ height: 56 }} footer={{ height: 100 }} padding={0}>
-      <SiteHeader activeTab={activeTab} onTabChange={onTabChange} isAdmin={isAdmin} isAdminPage={isAdminPage} />
+      <SiteHeader activeTab={activeTab} onTabChange={onTabChange} isAdmin={isAdmin} isAdminPage={isAdminPage} adminLabel={adminLabel} />
       <AppShell.Main
         bg="gray.1"
         style={{
