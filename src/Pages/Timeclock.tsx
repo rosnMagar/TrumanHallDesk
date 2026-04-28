@@ -1,18 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
 import {
-  Group, Button, Text, TextInput, Paper, Title,
-  Stack, Table, ScrollArea, Badge, Alert,
+  Group, Button, Text, Paper, Title,
+  Stack, Alert,
 } from '@mantine/core'
 import { IconLogin, IconLogout, IconClock } from '@tabler/icons-react'
 import { type Tab } from '../Components/SiteHeader'
 import PageLayout from '../Components/PageLayout'
-import {
-  appendPunch,
-  lastActionForBanner,
-  loadPunches,
-  punchesOnLocalDay,
-  type TimeclockPunch,
-} from '../lib/timeclockLocalStore'
+import { useTimeclock } from '../hooks/useTimeclock'
 
 function formatTime(d: Date): string {
   return d.toLocaleTimeString('en-US', {
@@ -46,55 +40,31 @@ function formatPunchRow(iso: string): string {
 
 export default function Timeclock() {
   const [activeTab, setActiveTab] = useState<Tab>('Timeclock')
-  const [bannerId, setBannerId] = useState('')
   const [now, setNow] = useState(() => new Date())
-  const [punches, setPunches] = useState<TimeclockPunch[]>(() => loadPunches())
   const [message, setMessage] = useState<{ type: 'ok' | 'err'; text: string } | null>(null)
+
+  const { punches, loading, error, punch } = useTimeclock()
 
   useEffect(() => {
     const id = window.setInterval(() => setNow(new Date()), 1000)
     return () => window.clearInterval(id)
   }, [])
 
-  const trimmedBanner = bannerId.trim()
-  const status = useMemo(
-    () => lastActionForBanner(trimmedBanner, punches),
-    [trimmedBanner, punches]
-  )
-  const isClockedIn = status === 'in'
+  const isClockedIn = useMemo(() => {
+    if (punches.length === 0) return false
+    const sorted = [...punches].sort((a, b) => new Date(b.at).getTime() - new Date(a.at).getTime())
+    return sorted[0].action === 'in'
+  }, [punches])
 
-  const todayPunches = useMemo(
-    () =>
-      [...punchesOnLocalDay(punches, new Date())].sort(
-        (a, b) => new Date(b.at).getTime() - new Date(a.at).getTime()
-      ),
-    [punches]
-  )
-
-  const punch = (action: 'in' | 'out') => {
+  const handlePunch = async (action: 'in' | 'out') => {
     setMessage(null)
-    if (!trimmedBanner) {
-      setMessage({ type: 'err', text: 'Enter your Banner ID first.' })
-      return
+    const result = await punch(action)
+    if (result.success) {
+      const timestamp = result.timestamp ? ` at ${formatPunchRow(result.timestamp)}` : ''
+      setMessage({ type: 'ok', text: `${result.message}${timestamp}` })
+    } else {
+      setMessage({ type: 'err', text: result.message })
     }
-    const last = lastActionForBanner(trimmedBanner, punches)
-    if (action === 'in' && last === 'in') {
-      setMessage({ type: 'err', text: 'You are already clocked in. Clock out before clocking in again.' })
-      return
-    }
-    if (action === 'out' && last !== 'in') {
-      setMessage({ type: 'err', text: 'Clock in before you can clock out.' })
-      return
-    }
-    const updated = appendPunch(trimmedBanner, action)
-    setPunches(updated)
-    setMessage({
-      type: 'ok',
-      text:
-        action === 'in'
-          ? `Clocked in at ${formatPunchRow(updated[updated.length - 1].at)}`
-          : `Clocked out at ${formatPunchRow(updated[updated.length - 1].at)}`,
-    })
   }
 
   return (
@@ -118,11 +88,9 @@ export default function Timeclock() {
                 </Text>
               </div>
             </Group>
-            {trimmedBanner ? (
-              <Badge size="lg" variant="light" color={isClockedIn ? 'teal' : 'gray'}>
-                {isClockedIn ? 'Clocked in' : 'Clocked out'}
-              </Badge>
-            ) : null}
+            <Text size="sm" c={isClockedIn ? 'teal' : 'dimmed'} fw={500}>
+              {isClockedIn ? 'Clocked in' : 'Clocked out'}
+            </Text>
           </Group>
         </Paper>
 
@@ -130,13 +98,11 @@ export default function Timeclock() {
         <Paper withBorder shadow="xs" p="xl" radius="md">
           <Title order={4} mb="lg">Timeclock</Title>
           <Stack gap="md">
-            <TextInput
-              label="Banner ID"
-              description="Enter your 9-digit Banner ID"
-              placeholder="123456789"
-              value={bannerId}
-              onChange={(e) => setBannerId(e.target.value)}
-            />
+            {error ? (
+              <Alert color="red" title="Error">
+                {error}
+              </Alert>
+            ) : null}
 
             {message ? (
               <Alert
@@ -151,8 +117,9 @@ export default function Timeclock() {
               <Button
                 color="teal"
                 leftSection={<IconLogin size={18} />}
-                onClick={() => punch('in')}
-                disabled={!trimmedBanner || isClockedIn}
+                onClick={() => handlePunch('in')}
+                disabled={isClockedIn || loading}
+                loading={loading}
               >
                 Clock In
               </Button>
@@ -160,8 +127,9 @@ export default function Timeclock() {
                 color="red"
                 variant="light"
                 leftSection={<IconLogout size={18} />}
-                onClick={() => punch('out')}
-                disabled={!trimmedBanner || !isClockedIn}
+                onClick={() => handlePunch('out')}
+                disabled={!isClockedIn || loading}
+                loading={loading}
               >
                 Clock Out
               </Button>
@@ -169,38 +137,24 @@ export default function Timeclock() {
           </Stack>
         </Paper>
 
-        {/* Today's Punches */}
+        {/* My Punches */}
         <Paper withBorder shadow="xs" p="xl" radius="md">
-          <Title order={5} mb="md">Today's Punches</Title>
-          {todayPunches.length === 0 ? (
-            <Text size="sm" c="dimmed">No punches recorded for today yet.</Text>
+          <Title order={5} mb="md">My Punches Today</Title>
+          {punches.length === 0 ? (
+            <Text size="sm" c="dimmed">No punches recorded today.</Text>
           ) : (
-            <ScrollArea.Autosize mah={320}>
-              <Table striped highlightOnHover withTableBorder verticalSpacing="sm">
-                <Table.Thead>
-                  <Table.Tr>
-                    <Table.Th>Banner ID</Table.Th>
-                    <Table.Th>Action</Table.Th>
-                    <Table.Th>Time</Table.Th>
-                  </Table.Tr>
-                </Table.Thead>
-                <Table.Tbody>
-                  {todayPunches.map((row) => (
-                    <Table.Tr key={row.id}>
-                      <Table.Td>{row.bannerId}</Table.Td>
-                      <Table.Td>
-                        <Badge size="sm" color={row.action === 'in' ? 'teal' : 'orange'} variant="light">
-                          {row.action === 'in' ? 'In' : 'Out'}
-                        </Badge>
-                      </Table.Td>
-                      <Table.Td style={{ fontVariantNumeric: 'tabular-nums' }}>
-                        {formatPunchRow(row.at)}
-                      </Table.Td>
-                    </Table.Tr>
-                  ))}
-                </Table.Tbody>
-              </Table>
-            </ScrollArea.Autosize>
+            <Stack gap="xs">
+              {punches.map((p) => (
+                <Group key={p.id} justify="space-between">
+                  <Text size="sm" fw={500}>
+                    {p.action === 'in' ? 'Clocked in' : 'Clocked out'}
+                  </Text>
+                  <Text size="sm" c="dimmed" style={{ fontVariantNumeric: 'tabular-nums' }}>
+                    {formatPunchRow(p.at)}
+                  </Text>
+                </Group>
+              ))}
+            </Stack>
           )}
         </Paper>
 
