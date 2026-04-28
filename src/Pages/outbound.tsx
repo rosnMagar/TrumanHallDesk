@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import {
-  Group, Button, TextInput, Paper, Title,
+  Button, Paper, Title,
 } from '@mantine/core'
 import { type Tab } from '../Components/SiteHeader'
 import PageLayout from '../Components/PageLayout'
@@ -42,7 +42,6 @@ const INITIAL_PACKAGES: Package[] = [
 
 export default function ResidenceLifeOutbound() {
   const [activeTab, setActiveTab] = useState<Tab>('Outbound')
-  const [bannerId, setBannerId] = useState('')
   const [packages, setPackages] = useState<Package[]>(INITIAL_PACKAGES)
 
   const handlePickup = (id: number) => {
@@ -57,9 +56,6 @@ export default function ResidenceLifeOutbound() {
     alert(`Forwarding package ID ${id}`)
   }
 
-  const handleShowForwarded = () => {
-    alert('Showing packages to be forwarded')
-  }
 
   const columns: Column<Package>[] = [
     { key: 'id', label: 'Package ID', sortable: true },

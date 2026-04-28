@@ -49,19 +49,13 @@ const filterOptions: Record<string, { value: string; label: string }[]> = {
 export default function TimeclockLogs() {
   const [activeTab, setActiveTab] = useState<Tab>('Timeclock')
   const [logs, setLogs] = useState<TimeclockLog[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
 
   const fetchLogs = async () => {
-    setLoading(true)
-    setError(null)
     try {
       const data = await getAllPunches()
       setLogs(data)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load timeclock logs')
-    } finally {
-      setLoading(false)
+      console.error(err instanceof Error ? err.message : 'Failed to load timeclock logs')
     }
   }
 

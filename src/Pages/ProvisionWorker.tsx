@@ -7,7 +7,6 @@ import { IconUserPlus, IconId } from '@tabler/icons-react'
 import { provisionWorker } from '../api/client'
 import { useLambda } from '../hooks/useLambda'
 import PageLayout from '../Components/PageLayout'
-import type { Tab } from '../Components/SiteHeader'
 
 export default function ProvisionWorker() {
   const [firstName, setFirstName] = useState('')

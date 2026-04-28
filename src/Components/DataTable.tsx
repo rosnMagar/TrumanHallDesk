@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import {
-  Group, Button, Text, TextInput, Paper, Stack,
+  Group, Button, Text, TextInput, Paper,
   Table, Pagination, Select, Collapse,
 } from '@mantine/core'
 import { IconSearch, IconAdjustments, IconArrowUp, IconArrowDown, IconX } from '@tabler/icons-react'
@@ -19,7 +19,7 @@ export interface FilterField<T> {
   label: string
 }
 
-interface DataTableProps<T extends { id: number }> {
+interface DataTableProps<T extends { id: string | number }> {
   data: T[]
   columns: Column<T>[]
   searchPlaceholder?: string
@@ -30,7 +30,7 @@ interface DataTableProps<T extends { id: number }> {
   emptyMessage?: string
 }
 
-export default function DataTable<T extends { id: number }>({
+export default function DataTable<T extends { id: string | number }>({
   data,
   columns,
   searchPlaceholder = 'Search',

@@ -21,7 +21,7 @@ export default function ResidentLockout() {
   const [phoneNumber, setPhoneNumber] = useState('')
   const [keyNumber, setKeyNumber] = useState('')
 
-  const { execute: fetchUser, loading: isLoadingUser, error: searchError, reset: resetUser } = useLambda(getUser)
+  const { execute: fetchUser, loading: isLoadingUser, error: searchError, reset: _resetUser } = useLambda(getUser)
   const { execute: submitLockout, loading: isSubmitting, error: submitError, reset: resetSubmit } = useLambda(createLockout)
   const [successMsg, setSuccessMsg] = useState('')
 
