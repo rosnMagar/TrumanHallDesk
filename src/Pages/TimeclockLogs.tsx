@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { Title } from '@mantine/core'
 import { type Tab } from '../Components/SiteHeader'
 import PageLayout from '../Components/PageLayout'
@@ -29,23 +29,6 @@ const filterFields = [
   { key: 'action' as const, label: 'In/Out' },
 ]
 
-const filterOptions: Record<string, { value: string; label: string }[]> = {
-  building: [
-    "Ryle Hall",
-    "Blanton-Nason Brewer Hall",
-    "Missouri Hall",
-    "Centennial Hall",
-    "Dobson Hall",
-    "West Hall",
-    "Campbell Hall",
-    "Grim",
-  ].map((v) => ({ value: v, label: v })),
-  action: [
-    { value: 'in', label: 'In' },
-    { value: 'out', label: 'Out' },
-  ],
-}
-
 export default function TimeclockLogs() {
   const [activeTab, setActiveTab] = useState<Tab>('Timeclock')
   const [logs, setLogs] = useState<TimeclockLog[]>([])
@@ -58,6 +41,17 @@ export default function TimeclockLogs() {
       console.error(err instanceof Error ? err.message : 'Failed to load timeclock logs')
     }
   }
+
+  const filterOptions = useMemo(() => {
+    const buildings = [...new Set(logs.map(log => log.building).filter(Boolean))].sort()
+    return {
+      building: buildings.map(v => ({ value: v, label: v })),
+      action: [
+        { value: 'in', label: 'In' },
+        { value: 'out', label: 'Out' },
+      ],
+    }
+  }, [logs])
 
   useEffect(() => {
     fetchLogs()
