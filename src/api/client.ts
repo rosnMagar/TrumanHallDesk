@@ -191,6 +191,8 @@ export const getPackage = (id: number) => apiFetch<Package>(URL.packages, `/${id
 export const createPackage = (p: Omit<Package, 'uniqueID'>) => apiFetch<{ uniqueID: number }>(URL.packages, '', 'POST', p);
 export const updatePackage = (id: number, p: Partial<Package>) => apiFetch<{ updated: boolean }>(URL.packages, `/${id}`, 'PUT', p);
 export const deletePackage = (id: number) => apiFetch<{ deleted: boolean }>(URL.packages, `/${id}`, 'DELETE');
+export const getAllPackages = () => apiFetch<any[]>(URL.packages, '');
+export const pickupPackage = (uniqueID: number) => apiFetch<{ success: boolean }>(URL.packages, '/pickup', 'POST', { uniqueID });
 
 // ── Lockouts ──────────────────────────────────────────────────────────────────
 interface CreateLockoutPayload {

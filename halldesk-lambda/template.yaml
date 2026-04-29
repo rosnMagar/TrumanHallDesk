@@ -334,6 +334,48 @@ Resources:
       Policies:
         - AWSLambdaBasicExecutionRole
 
+  GetAllPackagesFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: GetAllPackages
+      Handler: getAllPackages.handler
+      CodeUri: packages/
+      Runtime: nodejs20.x
+      Timeout: 30
+      MemorySize: 128
+      Layers:
+        - Ref: MySQLLayerArn
+      Environment:
+        Variables:
+          DB_HOST: !Ref DBHost
+          DB_PORT: !Ref DBPort
+          DB_USER: !Ref DBUser
+          DB_PASSWORD: !Ref DBPassword
+          DB_NAME: !Ref DBName
+      Policies:
+        - AWSLambdaBasicExecutionRole
+
+  PickupPackageFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: PickupPackage
+      Handler: pickupPackage.handler
+      CodeUri: packages/
+      Runtime: nodejs20.x
+      Timeout: 30
+      MemorySize: 128
+      Layers:
+        - Ref: MySQLLayerArn
+      Environment:
+        Variables:
+          DB_HOST: !Ref DBHost
+          DB_PORT: !Ref DBPort
+          DB_USER: !Ref DBUser
+          DB_PASSWORD: !Ref DBPassword
+          DB_NAME: !Ref DBName
+      Policies:
+        - AWSLambdaBasicExecutionRole
+
   RecordPunchFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -660,9 +702,28 @@ Resources:
                 httpMethod: POST
                 type: aws_proxy
               responses: {}
+            get:
+              x-amazon-apigateway-integration:
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetAllPackagesFunction.Arn}/invocations"
+                httpMethod: POST
+                type: aws_proxy
+              responses: {}
             options:
               x-amazon-apigateway-integration:
-                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CreatePackageFunction.Arn}/invocations"
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetAllPackagesFunction.Arn}/invocations"
+                httpMethod: POST
+                type: aws_proxy
+              responses: {}
+          /packages/pickup:
+            post:
+              x-amazon-apigateway-integration:
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${PickupPackageFunction.Arn}/invocations"
+                httpMethod: POST
+                type: aws_proxy
+              responses: {}
+            options:
+              x-amazon-apigateway-integration:
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${PickupPackageFunction.Arn}/invocations"
                 httpMethod: POST
                 type: aws_proxy
               responses: {}
@@ -817,6 +878,22 @@ Resources:
     Properties:
       Action: lambda:InvokeFunction
       FunctionName: !Ref CreatePackageFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGatewayApi}/*/*/*"
+
+  GetAllPackagesPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref GetAllPackagesFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGatewayApi}/*/*/*"
+
+  PickupPackagePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref PickupPackageFunction
       Principal: apigateway.amazonaws.com
       SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGatewayApi}/*/*/*"
 
