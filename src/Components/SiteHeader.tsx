@@ -65,8 +65,13 @@ export default function SiteHeader({ activeTab, onTabChange, isAdminPage = false
   return (
     <AppShell.Header>
       <Group h="100%" px="md" justify="space-between">
-        <Text fw={700} size="xl" c="brand-purple">Residence Life</Text>
 
+        {/* Left section - fixed width to prevent center tabs from shifting */}
+        <Box miw={220}>
+          <Text fw={700} size="xl" c="brand-purple">Residence Life</Text>
+        </Box>
+
+        {/* Center section - tabs */}
         <Group gap="xs">
           {TABS.map(tab => (
             <Button
@@ -88,7 +93,8 @@ export default function SiteHeader({ activeTab, onTabChange, isAdminPage = false
           )}
         </Group>
 
-        <Group gap="xs">
+        {/* Right section - fixed width, right-aligned to balance the left */}
+        <Box miw={220} style={{ display: 'flex', justifyContent: 'flex-end' }}>
           <Menu shadow="md" width={160} position="bottom-end">
             <Menu.Target>
               <UnstyledButton>
@@ -118,7 +124,8 @@ export default function SiteHeader({ activeTab, onTabChange, isAdminPage = false
               </Menu.Item>
             </Menu.Dropdown>
           </Menu>
-        </Group>
+        </Box>
+
       </Group>
 
       <Modal
