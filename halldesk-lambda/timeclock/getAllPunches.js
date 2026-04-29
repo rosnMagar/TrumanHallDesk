@@ -35,7 +35,7 @@ export const handler = async (event) => {
         tp.id,
         tp.bannerId,
         tp.action,
-        tp.`at`,
+        tp.\`at\`,
         u.firstName,
         u.lastName,
         COALESCE(b.name, b2.name, '') AS building
