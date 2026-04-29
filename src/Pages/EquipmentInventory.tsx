@@ -1,8 +1,9 @@
 import { useState } from 'react'
-import { Title, Stack, Alert } from '@mantine/core'
+import { Title, Stack, Alert, Button, Group } from '@mantine/core'
+import { useNavigate } from 'react-router-dom'
 import { useEquipment } from '../hooks/useEquipment'
 import { useCheckin } from '../hooks/useCheckin'
-import { IconCheck, IconX, IconAlertCircle } from '@tabler/icons-react'
+import { IconCheck, IconX, IconAlertCircle, IconList } from '@tabler/icons-react'
 import PageLayout from '../Components/PageLayout'
 import ActionTable, { type Column, type Tab } from '../Components/ActionTable'
 import type { Equipment } from '../api/types'
@@ -27,6 +28,7 @@ const calculateDaysOut = (checkoutTime: string | undefined): number | null => {
 }
 
 export default function EquipmentInventory() {
+  const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState<Tab>('Equipment')
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
@@ -81,7 +83,7 @@ export default function EquipmentInventory() {
     {
       label: 'Check In',
       onClick: (row: EquipmentRow) => handleCheckIn(row),
-      hidden: (row: EquipmentRow) => row.checkedOut !== 'Y',
+      disabled: (row: EquipmentRow) => row.checkedOut !== 'Y',
       variant: 'light' as const,
       color: 'green',
     },
@@ -102,7 +104,17 @@ export default function EquipmentInventory() {
       )}
 
       <Stack gap="sm">
-        <Title order={3}>Equipment Inventory</Title>
+        <Group justify="space-between">
+          <Title order={3}>Equipment Inventory</Title>
+          <Button
+            color="brand-blue"
+            variant="light"
+            leftSection={<IconList size={18} />}
+            onClick={() => navigate('/equipment')}
+          >
+            Check Out Equipment
+          </Button>
+        </Group>
         
         <ActionTable
           data={rows}
