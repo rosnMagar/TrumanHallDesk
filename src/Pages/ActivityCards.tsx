@@ -44,7 +44,7 @@ export default function ActivityCards() {
   }
 
   return (
-    <PageLayout activeTab={activeTab} onTabChange={setActiveTab} isAdmin={true} adminLabel="Activity Cards" isAdminPage={true}>
+    <PageLayout activeTab={activeTab} onTabChange={setActiveTab} adminLabel="Activity Cards" isAdminPage={true}>
       <Title order={2}>Activity Cards</Title>
 
       <ActionTable

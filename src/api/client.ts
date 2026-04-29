@@ -153,6 +153,14 @@ interface ProvisionWorkerPayload {
 }
 export const provisionWorker = (data: ProvisionWorkerPayload) => apiFetch<{ message: string, bannerID: string, cognitoID: string }>(URL.admin, '/provision', 'POST', data);
 
+export interface AdminCheckResult {
+  isAdmin: boolean;
+  bannerID?: string;
+  assignedBuilding?: string;
+  officeNumber?: string;
+}
+export const checkAdmin = () => apiFetch<AdminCheckResult>(URL.admin, '/check', 'GET');
+
 // ── Packages ──────────────────────────────────────────────────────────────────
 type PackageFilter = Partial<Pick<Package, 'owner' | 'type' | 'pickedUp' | 'emailSent' | 'requiresForwarding'>> & ListOptions;
 export const getPackages = (f?: PackageFilter) => apiFetch<Package[]>(URL.packages, toQuery(f));

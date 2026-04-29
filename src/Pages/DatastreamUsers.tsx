@@ -77,7 +77,7 @@ export default function DatastreamUsers() {
   }
 
   return (
-    <PageLayout activeTab={activeTab} onTabChange={setActiveTab} isAdmin={true} adminLabel="Datastream Users" isAdminPage={true}>
+    <PageLayout activeTab={activeTab} onTabChange={setActiveTab} adminLabel="Datastream Users" isAdminPage={true}>
       <Title order={2}>Datastream Users</Title>
 
       <Paper withBorder shadow="xs" radius="md" style={{ overflow: 'hidden' }}>

@@ -15,6 +15,8 @@ import PictureLookup from './Pages/PictureLookup'
 import UserInfoUpload from './Pages/UserInfoUpload'
 import ProvisionWorker from './Pages/ProvisionWorker'
 import ForwardPackage from './Pages/FowardPackage'
+import AdminRoute from './Components/AdminRoute'
+import { AdminProvider } from './context/AdminContext'
 import { Authenticator } from '@aws-amplify/ui-react'
 import '@aws-amplify/ui-react/styles.css'
 
@@ -23,24 +25,26 @@ function App() {
     <Authenticator>
       {() => (
         <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<ResidenceLife />} />
-            <Route path="/outbound" element={<Outbound />} />
-            <Route path="/lockout" element={<ResidentLockout />} />
-            <Route path="/equipment" element={<EquipmentCheckOut />} />
-            <Route path="/equipment/inventory" element={<EquipmentInventory />} />
-            <Route path="/timeclock" element={<Timeclock />} />
-            <Route path="/picture-lookup" element={<PictureLookup />} />
-            <Route path="/admin/allowed-users" element={<AllowedUsers />} />
-            <Route path="/admin/datastream-users" element={<DatastreamUsers />} />
-            <Route path="/admin/maintain-student" element={<MaintainStudentList />} />
-            <Route path="/admin/activity-cards" element={<ActivityCards />} />
-            <Route path="/admin/activity-items" element={<ActivityItemsList />} />
-            <Route path="/admin/timeclock-logs" element={<TimeclockLogs />} />
-            <Route path="/admin/user-info-upload" element={<UserInfoUpload />} />
-            <Route path="/admin/provision-worker" element={<ProvisionWorker />} />
-            <Route path="/forward-package" element={<ForwardPackage />} />
-          </Routes>
+          <AdminProvider>
+            <Routes>
+              <Route path="/" element={<ResidenceLife />} />
+              <Route path="/outbound" element={<Outbound />} />
+              <Route path="/lockout" element={<ResidentLockout />} />
+              <Route path="/equipment" element={<EquipmentCheckOut />} />
+              <Route path="/equipment/inventory" element={<EquipmentInventory />} />
+              <Route path="/timeclock" element={<Timeclock />} />
+              <Route path="/picture-lookup" element={<PictureLookup />} />
+              <Route path="/forward-package" element={<ForwardPackage />} />
+              <Route path="/admin/allowed-users" element={<AdminRoute><AllowedUsers /></AdminRoute>} />
+              <Route path="/admin/datastream-users" element={<AdminRoute><DatastreamUsers /></AdminRoute>} />
+              <Route path="/admin/maintain-student" element={<AdminRoute><MaintainStudentList /></AdminRoute>} />
+              <Route path="/admin/activity-cards" element={<AdminRoute><ActivityCards /></AdminRoute>} />
+              <Route path="/admin/activity-items" element={<AdminRoute><ActivityItemsList /></AdminRoute>} />
+              <Route path="/admin/timeclock-logs" element={<AdminRoute><TimeclockLogs /></AdminRoute>} />
+              <Route path="/admin/user-info-upload" element={<AdminRoute><UserInfoUpload /></AdminRoute>} />
+              <Route path="/admin/provision-worker" element={<AdminRoute><ProvisionWorker /></AdminRoute>} />
+            </Routes>
+          </AdminProvider>
         </BrowserRouter>
       )}
     </Authenticator>

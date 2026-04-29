@@ -97,7 +97,7 @@ export default function UserInfoUpload() {
   }
 
   return (
-    <PageLayout activeTab={activeTab} onTabChange={setActiveTab} isAdmin={true} isAdminPage={true}>
+    <PageLayout activeTab={activeTab} onTabChange={setActiveTab} isAdminPage={true}>
       <Title order={2}>User Information Management</Title>
 
       <Paper withBorder shadow="xs" p="xl" radius="md">

@@ -275,6 +275,27 @@ Resources:
                 - cognito-idp:AdminCreateUser
               Resource: !Sub "arn:aws:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/${UserPoolId}"
 
+  CheckAdminFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: CheckAdmin
+      Handler: checkAdmin.handler
+      CodeUri: admin/
+      Runtime: nodejs20.x
+      Timeout: 30
+      MemorySize: 128
+      Layers:
+        - Ref: MySQLLayerArn
+      Environment:
+        Variables:
+          DB_HOST: !Ref DBHost
+          DB_PORT: !Ref DBPort
+          DB_USER: !Ref DBUser
+          DB_PASSWORD: !Ref DBPassword
+          DB_NAME: !Ref DBName
+      Policies:
+        - AWSLambdaBasicExecutionRole
+
   GetUploadUrlFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -506,6 +527,19 @@ Resources:
                 httpMethod: POST
                 type: aws_proxy
               responses: {}
+          /admin/check:
+            get:
+              x-amazon-apigateway-integration:
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CheckAdminFunction.Arn}/invocations"
+                httpMethod: POST
+                type: aws_proxy
+              responses: {}
+            options:
+              x-amazon-apigateway-integration:
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CheckAdminFunction.Arn}/invocations"
+                httpMethod: POST
+                type: aws_proxy
+              responses: {}
           /users/{bannerID}/upload-url:
             options:
               x-amazon-apigateway-integration:
@@ -691,6 +725,14 @@ Resources:
     Properties:
       Action: lambda:InvokeFunction
       FunctionName: !Ref GetAllPunchesFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGatewayApi}/*/*/*"
+
+  CheckAdminPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref CheckAdminFunction
       Principal: apigateway.amazonaws.com
       SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGatewayApi}/*/*/*"
 
