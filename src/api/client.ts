@@ -162,6 +162,29 @@ export interface AdminCheckResult {
 export const checkAdmin = () => apiFetch<AdminCheckResult>(URL.admin, '/check', 'GET');
 
 // ── Packages ──────────────────────────────────────────────────────────────────
+export interface ResidentSearchResult {
+  bannerID: string;
+  lastName: string;
+  firstName: string;
+  email: string;
+  phoneNumber: string;
+  homeAddress: string;
+  roomID: string;
+  building: string;
+  buildingName: string;
+}
+
+export const searchResidents = (query: string) =>
+  apiFetch<ResidentSearchResult[]>(URL.packages, `/search?q=${encodeURIComponent(query)}`);
+
+interface CreatePackagePayload {
+  ownerBannerID: string;
+  trackingID: string;
+  type: string;
+}
+export const createNewPackage = (data: CreatePackagePayload) =>
+  apiFetch<{ success: boolean; packageID: number; staffName: string }>(URL.packages, '', 'POST', data);
+
 type PackageFilter = Partial<Pick<Package, 'owner' | 'type' | 'pickedUp' | 'emailSent' | 'requiresForwarding'>> & ListOptions;
 export const getPackages = (f?: PackageFilter) => apiFetch<Package[]>(URL.packages, toQuery(f));
 export const getPackage = (id: number) => apiFetch<Package>(URL.packages, `/${id}`);
