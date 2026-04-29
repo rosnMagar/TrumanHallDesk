@@ -64,7 +64,7 @@ export default function TimeclockLogs() {
   }, [])
 
   return (
-    <PageLayout activeTab={activeTab} onTabChange={setActiveTab} isAdmin={true} adminLabel="Timeclock" isAdminPage={true}>
+    <PageLayout activeTab={activeTab} onTabChange={setActiveTab} adminLabel="Timeclock" isAdminPage={true}>
       <Title order={2}>Timeclock</Title>
 
       <DataTable

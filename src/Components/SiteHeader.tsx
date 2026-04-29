@@ -4,6 +4,7 @@ import { AppShell } from '@mantine/core'
 import { IconDeviceDesktop, IconSettings, IconLogout } from '@tabler/icons-react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthenticator } from '@aws-amplify/ui-react'
+import { useAdmin } from '../context/AdminContext'
 
 export type Tab = 'Inbound' | 'Outbound' | 'Forward' | 'Lock-out' | 'Equipment' | 'Timeclock' | 'Picture Lookup'
 export const TABS: Tab[] = ['Inbound', 'Outbound', 'Forward', 'Lock-out', 'Equipment', 'Timeclock', 'Picture Lookup']
@@ -13,14 +14,14 @@ export type AdminPage = 'allowed-users' | 'datastream-users' | 'maintain-student
 interface SiteHeaderProps {
   activeTab: Tab
   onTabChange?: (tab: Tab) => void
-  isAdmin?: boolean
   isAdminPage?: boolean
   adminLabel?: string
 }
 
-export default function SiteHeader({ activeTab, onTabChange, isAdmin = true, isAdminPage = false, adminLabel = 'BNB Desk' }: SiteHeaderProps) {
+export default function SiteHeader({ activeTab, onTabChange, isAdminPage = false, adminLabel = 'BNB Desk' }: SiteHeaderProps) {
   const navigate = useNavigate()
   const { signOut } = useAuthenticator()
+  const { isAdmin } = useAdmin()
   const [adminModalOpen, setAdminModalOpen] = useState(false)
 
   const handleTabClick = (tab: Tab) => {

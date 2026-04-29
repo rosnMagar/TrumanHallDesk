@@ -34,7 +34,7 @@ export default function MaintainStudentList() {
   }
 
   return (
-    <PageLayout activeTab={activeTab} onTabChange={setActiveTab} isAdmin={true} adminLabel="Maintain Student List" isAdminPage={true}>
+    <PageLayout activeTab={activeTab} onTabChange={setActiveTab} adminLabel="Maintain Student List" isAdminPage={true}>
       <Title order={2}>Maintain Student List</Title>
 
       <Paper withBorder shadow="xs" p="xl" radius="md">

@@ -51,7 +51,7 @@ export default function AllowedUsers() {
   }
 
   return (
-    <PageLayout activeTab={activeTab} onTabChange={setActiveTab} isAdmin={true} adminLabel="Allowed Users" isAdminPage={true}>
+    <PageLayout activeTab={activeTab} onTabChange={setActiveTab} adminLabel="Allowed Users" isAdminPage={true}>
       <Title order={2}>Allowed Users</Title>
 
       <Paper withBorder shadow="xs" radius="md" style={{ overflow: 'hidden' }}>

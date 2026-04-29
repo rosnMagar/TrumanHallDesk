@@ -64,7 +64,7 @@ export default function ActivityItemsList() {
   }
 
   return (
-    <PageLayout activeTab={activeTab} onTabChange={setActiveTab} isAdmin={true} adminLabel="Activity Items List" isAdminPage={true}>
+    <PageLayout activeTab={activeTab} onTabChange={setActiveTab} adminLabel="Activity Items List" isAdminPage={true}>
       <Title order={2}>Activity Items List</Title>
 
       <ActionTable
