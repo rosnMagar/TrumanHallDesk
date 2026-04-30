@@ -38,13 +38,11 @@ export const handler = async (event) => {
         tp.\`at\`,
         u.firstName,
         u.lastName,
-        COALESCE(b.name, b2.name, '') AS building
+        COALESCE(dw.assignedBuilding, r.building, '') AS building
       FROM timeclock_punches tp
-      INNER JOIN \`user\` u ON tp.bannerId = u.bannerID
+      LEFT JOIN \`user\` u ON tp.bannerId = u.bannerID
       LEFT JOIN deskWorker dw ON tp.bannerId = dw.workerID
-      LEFT JOIN buildings b ON dw.assignedBuilding = b.buildingID
       LEFT JOIN resident r ON tp.bannerId = r.residentID
-      LEFT JOIN buildings b2 ON r.building = b2.buildingID
     `;
     const queryParams = [];
 
@@ -52,7 +50,7 @@ export const handler = async (event) => {
       query += ' WHERE DATE(tp.`at`) = ?';
       queryParams.push(date);
     } else {
-      query += ' WHERE DATE(tp.`at`) = CURDATE()';
+      query += ' WHERE tp.`at` >= DATE_SUB(CURDATE(), INTERVAL 3 MONTH)';
     }
 
     query += ' ORDER BY tp.`at` DESC';
