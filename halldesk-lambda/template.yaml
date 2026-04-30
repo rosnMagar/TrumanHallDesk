@@ -29,6 +29,10 @@ Parameters:
   UserPoolId:
     Type: String
     Description: The ID of the Cognito User Pool
+  SenderEmail:
+    Type: String
+    Description: Verified SES sender email address
+    Default: "halldesk-noreply@truman.edu"
 
 Resources:
   GetAllUsersFunction:
@@ -334,6 +338,48 @@ Resources:
       Policies:
         - AWSLambdaBasicExecutionRole
 
+  GetAllPackagesFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: GetAllPackages
+      Handler: getAllPackages.handler
+      CodeUri: packages/
+      Runtime: nodejs20.x
+      Timeout: 30
+      MemorySize: 128
+      Layers:
+        - Ref: MySQLLayerArn
+      Environment:
+        Variables:
+          DB_HOST: !Ref DBHost
+          DB_PORT: !Ref DBPort
+          DB_USER: !Ref DBUser
+          DB_PASSWORD: !Ref DBPassword
+          DB_NAME: !Ref DBName
+      Policies:
+        - AWSLambdaBasicExecutionRole
+
+  PickupPackageFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: PickupPackage
+      Handler: pickupPackage.handler
+      CodeUri: packages/
+      Runtime: nodejs20.x
+      Timeout: 30
+      MemorySize: 128
+      Layers:
+        - Ref: MySQLLayerArn
+      Environment:
+        Variables:
+          DB_HOST: !Ref DBHost
+          DB_PORT: !Ref DBPort
+          DB_USER: !Ref DBUser
+          DB_PASSWORD: !Ref DBPassword
+          DB_NAME: !Ref DBName
+      Policies:
+        - AWSLambdaBasicExecutionRole
+
   RecordPunchFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -396,6 +442,55 @@ Resources:
           DB_NAME: !Ref DBName
       Policies:
         - AWSLambdaBasicExecutionRole
+
+  SearchResidentsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: SearchResidents
+      Handler: searchResidents.handler
+      CodeUri: packages/
+      Runtime: nodejs20.x
+      Timeout: 30
+      MemorySize: 128
+      Layers:
+        - Ref: MySQLLayerArn
+      Environment:
+        Variables:
+          DB_HOST: !Ref DBHost
+          DB_PORT: !Ref DBPort
+          DB_USER: !Ref DBUser
+          DB_PASSWORD: !Ref DBPassword
+          DB_NAME: !Ref DBName
+      Policies:
+        - AWSLambdaBasicExecutionRole
+
+  CreatePackageFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: CreatePackage
+      Handler: createPackage.handler
+      CodeUri: packages/
+      Runtime: nodejs20.x
+      Timeout: 30
+      MemorySize: 128
+      Layers:
+        - Ref: MySQLLayerArn
+      Environment:
+        Variables:
+          DB_HOST: !Ref DBHost
+          DB_PORT: !Ref DBPort
+          DB_USER: !Ref DBUser
+          DB_PASSWORD: !Ref DBPassword
+          DB_NAME: !Ref DBName
+          SENDER_EMAIL: !Ref SenderEmail
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Statement:
+            - Effect: Allow
+              Action:
+                - ses:SendEmail
+                - ses:SendRawEmail
+              Resource: "*"
 
   ApiGatewayApi:
     Type: AWS::Serverless::Api
@@ -598,6 +693,51 @@ Resources:
                 httpMethod: POST
                 type: aws_proxy
                 responses: {}
+          /packages/search:
+            get:
+              x-amazon-apigateway-integration:
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SearchResidentsFunction.Arn}/invocations"
+                httpMethod: POST
+                type: aws_proxy
+              responses: {}
+            options:
+              x-amazon-apigateway-integration:
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SearchResidentsFunction.Arn}/invocations"
+                httpMethod: POST
+                type: aws_proxy
+              responses: {}
+          /packages:
+            post:
+              x-amazon-apigateway-integration:
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CreatePackageFunction.Arn}/invocations"
+                httpMethod: POST
+                type: aws_proxy
+              responses: {}
+            get:
+              x-amazon-apigateway-integration:
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetAllPackagesFunction.Arn}/invocations"
+                httpMethod: POST
+                type: aws_proxy
+              responses: {}
+            options:
+              x-amazon-apigateway-integration:
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetAllPackagesFunction.Arn}/invocations"
+                httpMethod: POST
+                type: aws_proxy
+              responses: {}
+          /packages/pickup:
+            post:
+              x-amazon-apigateway-integration:
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${PickupPackageFunction.Arn}/invocations"
+                httpMethod: POST
+                type: aws_proxy
+              responses: {}
+            options:
+              x-amazon-apigateway-integration:
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${PickupPackageFunction.Arn}/invocations"
+                httpMethod: POST
+                type: aws_proxy
+              responses: {}
 
   # --- Lambda Permissions for API Gateway ---
   GetAllUsersPermission:
@@ -733,6 +873,38 @@ Resources:
     Properties:
       Action: lambda:InvokeFunction
       FunctionName: !Ref CheckAdminFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGatewayApi}/*/*/*"
+
+  SearchResidentsPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref SearchResidentsFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGatewayApi}/*/*/*"
+
+  CreatePackagePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref CreatePackageFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGatewayApi}/*/*/*"
+
+  GetAllPackagesPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref GetAllPackagesFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGatewayApi}/*/*/*"
+
+  PickupPackagePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref PickupPackageFunction
       Principal: apigateway.amazonaws.com
       SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGatewayApi}/*/*/*"
 

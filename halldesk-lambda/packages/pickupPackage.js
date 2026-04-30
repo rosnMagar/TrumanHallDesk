@@ -14,13 +14,16 @@ export const handler = async (event) => {
     return { statusCode: 200, headers, body: '' };
   }
 
-  if (event.httpMethod !== 'GET') {
+  if (event.httpMethod !== 'POST') {
     return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method not allowed' }) };
   }
 
   try {
-    const params = event.queryStringParameters || {};
-    const date = params.date;
+    const { uniqueID } = JSON.parse(event.body || '{}');
+
+    if (!uniqueID) {
+      return { statusCode: 400, headers, body: JSON.stringify({ error: 'uniqueID is required' }) };
+    }
 
     connection = await mysql.createConnection({
       host: process.env.DB_HOST,
@@ -30,39 +33,19 @@ export const handler = async (event) => {
       database: process.env.DB_NAME
     });
 
-    let query = `
-      SELECT
-        tp.id,
-        tp.bannerId,
-        tp.action,
-        tp.\`at\`,
-        u.firstName,
-        u.lastName,
-        COALESCE(dw.assignedBuilding, r.building, '') AS building
-      FROM timeclock_punches tp
-      LEFT JOIN \`user\` u ON tp.bannerId = u.bannerID
-      LEFT JOIN deskWorker dw ON tp.bannerId = dw.workerID
-      LEFT JOIN resident r ON tp.bannerId = r.residentID
-    `;
-    const queryParams = [];
+    const [result] = await connection.execute(
+      `UPDATE packages SET pickedUp = 1 WHERE uniqueID = ?`,
+      [uniqueID]
+    );
 
-    if (date) {
-      query += ' WHERE DATE(tp.`at`) = ?';
-      queryParams.push(date);
-    } else {
-      query += ' WHERE tp.`at` >= DATE_SUB(CURDATE(), INTERVAL 3 MONTH)';
+    if (result.affectedRows === 0) {
+      return { statusCode: 404, headers, body: JSON.stringify({ error: 'Package not found' }) };
     }
 
-    query += ' ORDER BY tp.`at` DESC';
-
-    const [rows] = await connection.execute(query, queryParams);
-
-    return { statusCode: 200, headers, body: JSON.stringify(rows) };
+    return { statusCode: 200, headers, body: JSON.stringify({ success: true }) };
   } catch (error) {
     return { statusCode: 500, headers, body: JSON.stringify({ error: error.message }) };
   } finally {
-    if (connection) {
-      await connection.end();
-    }
+    if (connection) await connection.end();
   }
 };

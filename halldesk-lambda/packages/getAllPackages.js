@@ -14,14 +14,7 @@ export const handler = async (event) => {
     return { statusCode: 200, headers, body: '' };
   }
 
-  if (event.httpMethod !== 'GET') {
-    return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method not allowed' }) };
-  }
-
   try {
-    const params = event.queryStringParameters || {};
-    const date = params.date;
-
     connection = await mysql.createConnection({
       host: process.env.DB_HOST,
       port: parseInt(process.env.DB_PORT) || 3306,
@@ -30,39 +23,36 @@ export const handler = async (event) => {
       database: process.env.DB_NAME
     });
 
-    let query = `
+    // Join with user table to get resident name and building/room via resident table
+    const [rows] = await connection.execute(`
       SELECT
-        tp.id,
-        tp.bannerId,
-        tp.action,
-        tp.\`at\`,
+        p.uniqueID,
+        p.owner,
+        p.trackingID,
+        p.receivedDate,
+        p.emailSent,
+        p.pickedUp,
+        p.type,
+        p.requiresForwarding,
         u.firstName,
         u.lastName,
-        COALESCE(dw.assignedBuilding, r.building, '') AS building
-      FROM timeclock_punches tp
-      LEFT JOIN \`user\` u ON tp.bannerId = u.bannerID
-      LEFT JOIN deskWorker dw ON tp.bannerId = dw.workerID
-      LEFT JOIN resident r ON tp.bannerId = r.residentID
-    `;
-    const queryParams = [];
-
-    if (date) {
-      query += ' WHERE DATE(tp.`at`) = ?';
-      queryParams.push(date);
-    } else {
-      query += ' WHERE tp.`at` >= DATE_SUB(CURDATE(), INTERVAL 3 MONTH)';
-    }
-
-    query += ' ORDER BY tp.`at` DESC';
-
-    const [rows] = await connection.execute(query, queryParams);
+        u.phoneNumber,
+        r.roomID,
+        r.building
+      FROM packages p
+      LEFT JOIN \`user\` u ON p.owner = u.bannerID
+      LEFT JOIN (
+        SELECT residentID, roomID, building
+        FROM resident
+        GROUP BY residentID
+      ) r ON p.owner = r.residentID
+      ORDER BY p.receivedDate DESC, p.uniqueID DESC
+    `);
 
     return { statusCode: 200, headers, body: JSON.stringify(rows) };
   } catch (error) {
     return { statusCode: 500, headers, body: JSON.stringify({ error: error.message }) };
   } finally {
-    if (connection) {
-      await connection.end();
-    }
+    if (connection) await connection.end();
   }
 };

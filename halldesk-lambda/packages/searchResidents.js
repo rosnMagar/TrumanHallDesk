@@ -20,7 +20,11 @@ export const handler = async (event) => {
 
   try {
     const params = event.queryStringParameters || {};
-    const date = params.date;
+    const query = params.q;
+
+    if (!query || query.length < 2) {
+      return { statusCode: 400, headers, body: JSON.stringify({ error: 'Query must be at least 2 characters' }) };
+    }
 
     connection = await mysql.createConnection({
       host: process.env.DB_HOST,
@@ -30,32 +34,25 @@ export const handler = async (event) => {
       database: process.env.DB_NAME
     });
 
-    let query = `
-      SELECT
-        tp.id,
-        tp.bannerId,
-        tp.action,
-        tp.\`at\`,
-        u.firstName,
+    const [rows] = await connection.execute(
+      `SELECT
+        u.bannerID,
         u.lastName,
-        COALESCE(dw.assignedBuilding, r.building, '') AS building
-      FROM timeclock_punches tp
-      LEFT JOIN \`user\` u ON tp.bannerId = u.bannerID
-      LEFT JOIN deskWorker dw ON tp.bannerId = dw.workerID
-      LEFT JOIN resident r ON tp.bannerId = r.residentID
-    `;
-    const queryParams = [];
-
-    if (date) {
-      query += ' WHERE DATE(tp.`at`) = ?';
-      queryParams.push(date);
-    } else {
-      query += ' WHERE tp.`at` >= DATE_SUB(CURDATE(), INTERVAL 3 MONTH)';
-    }
-
-    query += ' ORDER BY tp.`at` DESC';
-
-    const [rows] = await connection.execute(query, queryParams);
+        u.firstName,
+        u.email,
+        u.phoneNumber,
+        u.homeAddress,
+        r.roomID,
+        r.building,
+        b.name AS buildingName
+      FROM \`user\` u
+      INNER JOIN resident r ON u.bannerID = r.residentID
+      LEFT JOIN buildings b ON r.building = b.buildingID
+      WHERE u.lastName LIKE ?
+      ORDER BY u.lastName, u.firstName
+      LIMIT 20`,
+      [`${query}%`]
+    );
 
     return { statusCode: 200, headers, body: JSON.stringify(rows) };
   } catch (error) {
