@@ -138,7 +138,14 @@ export default function ResidentLockout() {
                   />
                 </Stack>
 
-                {submitError && <Text c="red" size="sm" mt="sm">{submitError}</Text>}
+                {submitError && (
+                  <Paper withBorder p="md" radius="md" mt="sm" bg="red.0" style={{ borderColor: 'var(--mantine-color-red-4)' }}>
+                    <Group gap="sm" wrap="nowrap">
+                      <IconKey size={20} color="var(--mantine-color-red-7)" />
+                      <Text c="red.8" size="sm" fw={600}>{submitError}</Text>
+                    </Group>
+                  </Paper>
+                )}
                 {successMsg && <Text c="teal" size="sm" mt="sm" fw={500}>{successMsg}</Text>}
 
                 <Group justify="flex-end" mt="xl">
