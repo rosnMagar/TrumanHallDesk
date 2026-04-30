@@ -73,9 +73,24 @@ export const handler = async (event) => {
       await connection.execute('UPDATE `user` SET phoneNumber = ? WHERE bannerID = ?', [phoneNumber, ownerBannerID]);
     }
 
+    // Check if resident already has a key checked out
+    const [existingKeys] = await connection.execute(
+      `SELECT equipmentID, description FROM equipment WHERE currentOwner = ? AND type = 'keys' AND checkedOut = 'Y'`,
+      [residentID]
+    );
+    if (existingKeys.length > 0) {
+      return {
+        statusCode: 409,
+        headers,
+        body: JSON.stringify({
+          error: `This resident already has a key checked out (Key: ${existingKeys[0].description}, ID: ${existingKeys[0].equipmentID}). Please check it in first.`
+        })
+      };
+    }
+
     const [insertResult] = await connection.execute(
-      `INSERT INTO equipment (currentOwner, type, checkoutTime, checkoutStaff, description)
-       VALUES (?, 'keys', NOW(), ?, ?)`,
+      `INSERT INTO equipment (currentOwner, type, checkoutTime, checkoutStaff, description, checkedOut)
+       VALUES (?, 'keys', NOW(), ?, ?, 'Y')`,
       [residentID, workerID, keyNumber]
     );
 
