@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react'
 import {
   Group, Button, Text, TextInput, Paper,
-  Table, Pagination, Select, Collapse, Checkbox,
+  Table, Pagination, Select, Collapse, Checkbox, Box
 } from '@mantine/core'
 import { IconSearch, IconAdjustments, IconArrowUp, IconArrowDown, IconX } from '@tabler/icons-react'
 
@@ -242,22 +242,23 @@ export default function ActionTable<T extends { id: number }>({
       )}
 
       <Paper withBorder shadow="xs" radius="md" style={{ overflow: 'hidden' }} mih={400}>
-        <Table withColumnBorders highlightOnHover verticalSpacing="md">
-          <Table.Thead>
-            <Table.Tr>
-              <Table.Th fw={700} w={40}>
-                <Checkbox
-                  checked={selectedIds.length === paginatedData.length && paginatedData.length > 0}
-                  indeterminate={selectedIds.length > 0 && selectedIds.length < paginatedData.length}
-                  onChange={handleSelectAll}
-                />
-</Table.Th>
+        <Box style={{ overflowX: 'auto' }}>
+          <Table withColumnBorders highlightOnHover verticalSpacing="md" miw={800}>
+            <Table.Thead>
+              <Table.Tr>
+                <Table.Th fw={700} w={40}>
+                  <Checkbox
+                    checked={selectedIds.length === paginatedData.length && paginatedData.length > 0}
+                    indeterminate={selectedIds.length > 0 && selectedIds.length < paginatedData.length}
+                    onChange={handleSelectAll}
+                  />
+                </Table.Th>
                 {columns.map(col => (
                   <Table.Th
                     key={String(col.key)}
                     fw={700}
                     onClick={col.sortable ? () => handleSort(String(col.key)) : undefined}
-                    style={col.sortable ? { cursor: 'pointer' } : undefined}
+                    style={col.sortable ? { cursor: 'pointer', whiteSpace: 'nowrap' } : { whiteSpace: 'nowrap' }}
                   >
                     {col.label}
                     {col.sortable && sortKey === col.key && (
@@ -266,54 +267,55 @@ export default function ActionTable<T extends { id: number }>({
                   </Table.Th>
                 ))}
                 {actionButtons.length > 0 && (
-                  <Table.Th fw={700}>Actions</Table.Th>
+                  <Table.Th fw={700} style={{ whiteSpace: 'nowrap' }}>Actions</Table.Th>
                 )}
               </Table.Tr>
-          </Table.Thead>
-          <Table.Tbody>
-            {paginatedData.length === 0 ? (
-              <Table.Tr>
-                <Table.Td colSpan={columns.length + (actionButtons.length > 0 ? 1 : 0) + 1}>
-                  <Text c="dimmed" ta="center" py="lg">{emptyMessage}</Text>
-                </Table.Td>
-              </Table.Tr>
-            ) : (
-              paginatedData.map(row => (
-                <Table.Tr key={row.id}>
-                  <Table.Td>
-                    <Checkbox
-                      checked={selectedIds.includes(row.id)}
-                      onChange={() => handleCheckboxChange(row.id)}
-                    />
+            </Table.Thead>
+            <Table.Tbody>
+              {paginatedData.length === 0 ? (
+                <Table.Tr>
+                  <Table.Td colSpan={columns.length + (actionButtons.length > 0 ? 1 : 0) + 1}>
+                    <Text c="dimmed" ta="center" py="lg">{emptyMessage}</Text>
                   </Table.Td>
-                  {columns.map(col => (
-                    <Table.Td key={String(col.key)}>
-                      {col.render ? col.render(row) : String(row[col.key])}
-                    </Table.Td>
-                  ))}
-                  {actionButtons.length > 0 && (
-                    <Table.Td>
-                      <Group gap="xs">
-                        {actionButtons.map((btn, idx) => (
-                          <Button
-                            key={idx}
-                            size="xs"
-                            variant={btn.variant || 'light'}
-                            color={btn.color || 'brand-blue'}
-                            onClick={() => btn.onClick(row)}
-                            disabled={btn.disabled?.(row)}
-                          >
-                            {btn.label}
-                          </Button>
-                        ))}
-                      </Group>
-                    </Table.Td>
-                  )}
                 </Table.Tr>
-              ))
-            )}
-          </Table.Tbody>
-        </Table>
+              ) : (
+                paginatedData.map(row => (
+                  <Table.Tr key={row.id}>
+                    <Table.Td>
+                      <Checkbox
+                        checked={selectedIds.includes(row.id)}
+                        onChange={() => handleCheckboxChange(row.id)}
+                      />
+                    </Table.Td>
+                    {columns.map(col => (
+                      <Table.Td key={String(col.key)}>
+                        {col.render ? col.render(row) : String(row[col.key])}
+                      </Table.Td>
+                    ))}
+                    {actionButtons.length > 0 && (
+                      <Table.Td>
+                        <Group gap="xs" wrap="nowrap">
+                          {actionButtons.map((btn, idx) => (
+                            <Button
+                              key={idx}
+                              size="xs"
+                              variant={btn.variant || 'light'}
+                              color={btn.color || 'brand-blue'}
+                              onClick={() => btn.onClick(row)}
+                              disabled={btn.disabled?.(row)}
+                            >
+                              {btn.label}
+                            </Button>
+                          ))}
+                        </Group>
+                      </Table.Td>
+                    )}
+                  </Table.Tr>
+                ))
+              )}
+            </Table.Tbody>
+          </Table>
+        </Box>
       </Paper>
 
       <Group justify="center" mt="md" style={{ visibility: totalPages > 1 ? 'visible' : 'hidden' }}>
