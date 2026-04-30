@@ -4,7 +4,7 @@ import {
   TextInput, ActionIcon, Tooltip, Loader, Center, Box,
 } from '@mantine/core'
 import {
-  IconSearch, IconPackage, IconCheck, IconRefresh, IconX,
+  IconSearch, IconPackage, IconCheck, IconRefresh, IconX, IconMail, IconMailOff,
 } from '@tabler/icons-react'
 import { type Tab } from '../Components/SiteHeader'
 import PageLayout from '../Components/PageLayout'
@@ -17,6 +17,7 @@ interface PackageRow {
   trackingID: string
   receivedDate: string
   pickedUp: boolean
+  emailSent: boolean
   type: string
   firstName: string
   lastName: string
@@ -147,6 +148,20 @@ export default function ResidenceLifeOutbound() {
           leftSection={pkg.pickedUp ? <IconCheck size={12} /> : <IconPackage size={12} />}
         >
           {pkg.pickedUp ? 'Picked Up' : 'Pending'}
+        </Badge>
+      ),
+    },
+    {
+      key: 'emailSent',
+      label: 'Email',
+      sortable: true,
+      render: (pkg) => (
+        <Badge
+          color={pkg.emailSent ? 'blue' : 'gray'}
+          variant="light"
+          leftSection={pkg.emailSent ? <IconMail size={12} /> : <IconMailOff size={12} />}
+        >
+          {pkg.emailSent ? 'Sent' : 'Not Sent'}
         </Badge>
       ),
     },

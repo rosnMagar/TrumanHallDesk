@@ -29,6 +29,10 @@ Parameters:
   UserPoolId:
     Type: String
     Description: The ID of the Cognito User Pool
+  SenderEmail:
+    Type: String
+    Description: Verified SES sender email address
+    Default: "halldesk-noreply@truman.edu"
 
 Resources:
   GetAllUsersFunction:
@@ -478,8 +482,15 @@ Resources:
           DB_USER: !Ref DBUser
           DB_PASSWORD: !Ref DBPassword
           DB_NAME: !Ref DBName
+          SENDER_EMAIL: !Ref SenderEmail
       Policies:
         - AWSLambdaBasicExecutionRole
+        - Statement:
+            - Effect: Allow
+              Action:
+                - ses:SendEmail
+                - ses:SendRawEmail
+              Resource: "*"
 
   ApiGatewayApi:
     Type: AWS::Serverless::Api
